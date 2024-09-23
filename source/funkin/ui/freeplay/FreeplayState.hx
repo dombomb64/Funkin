@@ -511,7 +511,11 @@ class FreeplayState extends MusicBeatSubState
     charSelectHint.alignment = CENTER;
     charSelectHint.font = "5by7";
     charSelectHint.color = 0xFF5F5F5F;
+    #if mobile
+    charSelectHint.text = 'Press on the DJ to change characters';
+    #else
     charSelectHint.text = 'Press [ ${controls.getDialogueNameFromControl(FREEPLAY_CHAR_SELECT, true)} ] to change characters';
+    #end
     charSelectHint.y -= 100;
     FlxTween.tween(charSelectHint, {y: charSelectHint.y + 100}, 0.8, {ease: FlxEase.quartOut});
 
