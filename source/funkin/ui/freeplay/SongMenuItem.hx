@@ -91,6 +91,7 @@ class SongMenuItem extends FlxSpriteGroup
 
   #if mobile
   public var theActualHitbox:FlxSprite;
+  public var confirmed:Bool;
   #end
 
   public function new(x:Float, y:Float)
@@ -623,7 +624,7 @@ class SongMenuItem extends FlxSpriteGroup
     if (impactThing != null) impactThing.angle = capsule.angle;
 
     #if mobile
-    if (selected && TouchUtil.overlaps(theActualHitbox, camera) && !SwipeUtil.swipeAny && TouchUtil.justReleased) onConfirm();
+    if (selected && !confirmed && TouchUtil.overlaps(theActualHitbox, camera) && !SwipeUtil.swipeAny && TouchUtil.justReleased) onConfirm();
     #end
 
     if (doJumpIn)
@@ -683,6 +684,7 @@ class SongMenuItem extends FlxSpriteGroup
     {
       pixelIcon.animation.play('confirm');
     }
+    #if mobile confirmed = true; #end
   }
 
   public function intendedY(index:Int):Float
