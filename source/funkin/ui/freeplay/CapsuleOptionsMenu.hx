@@ -98,7 +98,8 @@ class CapsuleOptionsMenu extends FlxSpriteGroup
       if (currentInstrumental.text == '') currentInstrumental.text = 'Default';
     }
 
-    if (parent.getControls().ACCEPT #if mobile || TouchUtil.overlapsComplex(currentInstrumental) && TouchUtil.justPressed #end)
+    if (parent.getControls().ACCEPT #if mobile || TouchUtil.overlapsComplex(currentInstrumental) && TouchUtil.justPressed 
+        && !TouchUtil.overlapsComplex(leftArrow) && !TouchUtil.overlapsComplex(rightArrow) #end)
     {
       onConfirm(instrumentalIds[currentInstrumentalIndex] ?? '');
     }
