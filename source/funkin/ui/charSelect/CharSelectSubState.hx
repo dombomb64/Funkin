@@ -811,7 +811,7 @@ class CharSelectSubState extends MusicBeatSubState
       gfChill.visible = true;
       curChar = availableChars.get(getCurrentSelected());
 
-      if (controls.ACCEPT #if mobile || TouchUtil.overlapsComplex(cursor) && TouchUtil.justPressed #end && !pressedSelect)
+      if(!pressedSelect && (controls.ACCEPT #if mobile || TouchUtil.overlapsComplex(cursor) && TouchUtil.justPressed #end))
       {
         cursorConfirmed.visible = true;
         cursorConfirmed.x = cursor.x - 2;
