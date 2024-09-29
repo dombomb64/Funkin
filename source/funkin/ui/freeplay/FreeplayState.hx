@@ -413,7 +413,7 @@ class FreeplayState extends MusicBeatSubState
     }
 
     #if mobile
-    djHitbox = new FlxSprite(58, 358).makeGraphic(400, 400, FlxColor.GREEN);
+    djHitbox = new FlxSprite(58, 358).makeGraphic(400, 400, FlxColor.TRANSPARENT);
     djHitbox.cameras = dj.cameras;
     djHitbox.active = false;
     add(djHitbox);
