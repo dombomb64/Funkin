@@ -44,6 +44,9 @@ import funkin.mobile.util.SwipeUtil;
 
 class CharSelectSubState extends MusicBeatSubState
 {
+  // what the actual hell
+  // having a hard time trying to make my changes work so i chose to be less stubborn and just remove them for now. - Zack
+  // Left this here so somebody can remind me
   var cursor:FlxSprite;
 
   var cursorBlue:FlxSprite;
@@ -429,9 +432,9 @@ class CharSelectSubState extends MusicBeatSubState
     touchBuddy = new FlxSprite().makeGraphic(10, 10, FlxColor.GREEN);
     touchBuddy.cameras = [charSelectCam]; // this is stupid but it works.
 
-    //addBackButton(FlxG.width * 0.96, FlxG.height * 0.84, FlxColor.WHITE, goBack);
+    // addBackButton(FlxG.width * 0.96, FlxG.height * 0.84, FlxColor.WHITE, goBack);
 
-    //FlxTween.tween(backButton, {x: 824}, FlxG.random.float(0.5, 0.95), {ease: FlxEase.backOut});
+    // FlxTween.tween(backButton, {x: 824}, FlxG.random.float(0.5, 0.95), {ease: FlxEase.backOut});
     #end
   }
 
@@ -713,7 +716,8 @@ class CharSelectSubState extends MusicBeatSubState
     if (TouchUtil.pressed) touchBuddy.setPosition(TouchUtil.touch.screenX, TouchUtil.touch.screenY);
     #end
 
-    if (controls.UI_UP_R || controls.UI_DOWN_R || controls.UI_LEFT_R || controls.UI_RIGHT_R #if mobile || SwipeUtil.swipeUp || SwipeUtil.swipeDown || SwipeUtil.swipeLeft || SwipeUtil.swipeRight #end) selectSound.pitch = 1;
+    if (controls.UI_UP_R || controls.UI_DOWN_R || controls.UI_LEFT_R || controls.UI_RIGHT_R #if mobile || SwipeUtil.swipeUp || SwipeUtil.swipeDown
+      || SwipeUtil.swipeLeft || SwipeUtil.swipeRight #end) selectSound.pitch = 1;
 
     syncAudio(elapsed);
 
@@ -811,7 +815,7 @@ class CharSelectSubState extends MusicBeatSubState
       gfChill.visible = true;
       curChar = availableChars.get(getCurrentSelected());
 
-      if(!pressedSelect && (controls.ACCEPT #if mobile || TouchUtil.overlapsComplex(cursor) && TouchUtil.justPressed #end))
+      if (!pressedSelect && (controls.ACCEPT #if mobile || TouchUtil.overlapsComplex(cursor) && TouchUtil.justPressed #end))
       {
         cursorConfirmed.visible = true;
         cursorConfirmed.x = cursor.x - 2;
