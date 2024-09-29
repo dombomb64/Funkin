@@ -211,6 +211,7 @@ class GameOverSubState extends MusicBeatSubState
   }
 
   var hasStartedAnimation:Bool = false;
+  var playedSfx:Bool = false;
 
   override function update(elapsed:Float):Void
   {
@@ -246,9 +247,7 @@ class GameOverSubState extends MusicBeatSubState
     //
 
     // Restart the level when pressing the assigned key.
-    if ((controls.ACCEPT #if mobile || (TouchUtil.justPressed && !TouchUtil.overlaps(backButton) && gameOverMusic.playing) #end)
-      && blueballed
-      && !mustNotExit)
+    if ((controls.ACCEPT #if mobile || (TouchUtil.justPressed && !TouchUtil.overlaps(backButton)) #end) && blueballed && !mustNotExit)
     {
       blueballed = false;
       confirmDeath();
