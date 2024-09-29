@@ -246,7 +246,9 @@ class GameOverSubState extends MusicBeatSubState
     //
 
     // Restart the level when pressing the assigned key.
-    if ((controls.ACCEPT #if mobile || (TouchUtil.justPressed && !TouchUtil.overlaps(backButton)) #end) && blueballed && !mustNotExit)
+    if ((controls.ACCEPT #if mobile || (TouchUtil.justPressed && !TouchUtil.overlaps(backButton) && gameOverMusic.playing) #end)
+      && blueballed
+      && !mustNotExit)
     {
       blueballed = false;
       confirmDeath();
@@ -440,27 +442,27 @@ class GameOverSubState extends MusicBeatSubState
 
   public function goBack()
   {
-      isEnding = true;
-      blueballed = false;
-      PlayState.instance.deathCounter = 0;
-      // PlayState.seenCutscene = false; // old thing...
-      if (gameOverMusic != null) gameOverMusic.stop();
+    isEnding = true;
+    blueballed = false;
+    PlayState.instance.deathCounter = 0;
+    // PlayState.seenCutscene = false; // old thing...
+    if (gameOverMusic != null) gameOverMusic.stop();
 
-      if (isChartingMode)
-      {
-        this.close();
-        if (FlxG.sound.music != null) FlxG.sound.music.pause(); // Don't reset song position!
-        PlayState.instance.close(); // This only works because PlayState is a substate!
-        return;
-      }
-      else if (PlayStatePlaylist.isStoryMode)
-      {
-        openSubState(new funkin.ui.transition.StickerSubState(null, (sticker) -> new StoryMenuState(sticker)));
-      }
-      else
-      {
-        openSubState(new funkin.ui.transition.StickerSubState(null, (sticker) -> FreeplayState.build(sticker)));
-      }
+    if (isChartingMode)
+    {
+      this.close();
+      if (FlxG.sound.music != null) FlxG.sound.music.pause(); // Don't reset song position!
+      PlayState.instance.close(); // This only works because PlayState is a substate!
+      return;
+    }
+    else if (PlayStatePlaylist.isStoryMode)
+    {
+      openSubState(new funkin.ui.transition.StickerSubState(null, (sticker) -> new StoryMenuState(sticker)));
+    }
+    else
+    {
+      openSubState(new funkin.ui.transition.StickerSubState(null, (sticker) -> FreeplayState.build(sticker)));
+    }
   }
 
   /**
