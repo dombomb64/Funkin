@@ -61,10 +61,6 @@ class Main extends Sprite
     haxe.Log.trace = funkin.util.logging.AnsiTrace.trace;
     funkin.util.logging.AnsiTrace.traceBF();
 
-    #if mobile
-    funkin.mobile.util.StorageUtil.copyNecessaryFiles(['mp4' => 'assets/videos']);
-    #end
-
     // Load mods to override assets.
     // TODO: Replace with loadEnabledMods() once the user can configure the mod list.
     funkin.modding.PolymodHandler.loadAllMods();
