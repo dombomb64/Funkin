@@ -19,7 +19,6 @@ jobs:
         with:
           key: cache-build-android
           path: |
-            ~/.gradle
             .haxelib/
             export/release/android/haxe/
             export/release/android/obj/
@@ -52,7 +51,7 @@ jobs:
       - name: Remove Docker Images
         run: docker rmi $(docker image ls -aq)
 
-      - name: Remove existing cache
+      - name: Remove Build Cache
         uses: actions/github-script@v6
         with:
           script: |
@@ -77,7 +76,6 @@ jobs:
         with:
           key: cache-build-android
           path: |
-            ~/.gradle
             .haxelib/
             export/release/android/haxe/
             export/release/android/obj/
