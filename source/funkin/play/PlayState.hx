@@ -528,6 +528,12 @@ class PlayState extends MusicBeatSubState
   #end
 
   /**
+   * Returns true if game is compiled for mobile.
+   * It is needed for mobile checks in HScript
+   */
+  var isMobilePlatform:Bool = #if mobile true #else false #end;
+
+  /**
    * PROPERTIES
    */
   /**
