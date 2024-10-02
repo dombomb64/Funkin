@@ -25,9 +25,13 @@ jobs:
           mkdir Payload
           mv *.app Payload
           zip -r Funkin.ipa Payload
-      - name: Upload Artifact
-        uses: actions/upload-artifact@main
+          mv Funkin.ipa ${{ github.workspace }}
+      - name: Upload Artifact to Google Drive
+        uses: mathisve/gdrive-upload-action@main
         with:
-          name: iOSBuild
-          path: export/release/ios/build/Release-iphoneos/*.ipa
-          if-no-files-found: error
+          owerwrite: true
+          filename: Funkin.ipa
+          name: iOSBuild.ipa
+          credentials: ${{ secrets.GDRIVE_CREDENTIALS }}
+          folderId: ${{ secrets.GDRIVE_FOLDERID }}
+          encoded: true
