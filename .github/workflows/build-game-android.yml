@@ -41,12 +41,16 @@ jobs:
       - name: Compile
         run: haxelib run lime build android
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@main
+      - name: Make a Zip For Upload
+        run: cd export/release/android/bin/app/build/outputs/apk/debug && zip androidBuild.zip *
+
+      - name: Upload Artifact to Google Drive
+        uses: mathisve/gdrive-upload-action@main
         with:
-          name: androidBuild
-          path: export/release/android/bin/app/build/outputs/apk/debug
-          if-no-files-found: error
+          filename: export/release/android/bin/app/build/outputs/apk/debug/androidBuild.zip
+          credentials: ${{ secrets.GDRIVE_CREDENTIALS }}
+          folderId: ${{ secrets.GDRIVE_FOLDERID }}
+          encoded: true
 
       - name: Remove Docker Images
         run: docker rmi $(docker image ls -aq)
