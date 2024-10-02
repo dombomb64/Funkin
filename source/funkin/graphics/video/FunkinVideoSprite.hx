@@ -1,7 +1,7 @@
 package funkin.graphics.video;
 
-#if hxCodec
-import hxcodec.flixel.FlxVideoSprite;
+#if hxvlc
+import hxvlc.flixel.FlxVideoSprite;
 
 /**
  * Not to be confused with FlxVideo, this is a hxcodec based video class
