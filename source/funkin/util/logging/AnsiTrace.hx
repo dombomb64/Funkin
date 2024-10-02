@@ -19,7 +19,6 @@ class AnsiTrace
     #else
     throw new haxe.exceptions.NotImplementedException()
     #end
-    #end
   }
 
   public static var colorSupported:Bool = #if sys (Sys.getEnv("TERM") == "xterm" || Sys.getEnv("ANSICON") != null) #else false #end;
