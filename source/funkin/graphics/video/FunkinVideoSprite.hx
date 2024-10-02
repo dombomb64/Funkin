@@ -4,7 +4,7 @@ package funkin.graphics.video;
 import hxvlc.flixel.FlxVideoSprite;
 
 /**
- * Not to be confused with FlxVideo, this is a hxcodec based video class
+ * Not to be confused with FlxVideo, this is a hxvlc based video class
  * We override it simply to correct/control our volume easier.
  */
 class FunkinVideoSprite extends FlxVideoSprite
