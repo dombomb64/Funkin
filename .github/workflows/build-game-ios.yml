@@ -25,7 +25,22 @@ jobs:
           mkdir Payload
           mv *.app Payload
           zip -r Funkin.ipa Payload
-          mv Funkin.ipa ${{ github.workspace }}
+      - name: Upload Artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: iOSBuild
+          path: export/release/ios/build/Release-iphoneos/*.ipa
+          if-no-files-found: error
+  Uploader:
+    needs: [iOS]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download iOS Build
+        uses: actions/download-artifact@main
+        with:
+           name: iOSBuild
+           path: ${{ github.workspace }}
+
       - name: Upload Artifact to Google Drive
         uses: mathisve/gdrive-upload-action@main
         with:
@@ -35,3 +50,8 @@ jobs:
           credentials: ${{ secrets.GDRIVE_CREDENTIALS }}
           folderId: ${{ secrets.GDRIVE_FOLDERID }}
           encoded: true
+
+      - name: Delete Artifact
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: iOSBuild
