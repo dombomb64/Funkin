@@ -235,7 +235,8 @@ class TitleState extends MusicBeatState
       {
         startingVolume: 0.0,
         overrideExisting: true,
-        restartTrack: true
+        restartTrack: false,
+        persist: true
       });
     var shouldFadeIn:Bool = (FlxG.sound.music != null);
     // Fade from 0.0 to 1 over 4 seconds
@@ -277,11 +278,6 @@ class TitleState extends MusicBeatState
     }
     #end
 
-    if (Save.instance.charactersSeen.contains("pico"))
-    {
-      Save.instance.charactersSeen.remove("pico");
-      Save.instance.oldChar = false;
-    }
     Conductor.instance.update();
 
     if (FlxG.keys.justPressed.I)
@@ -485,7 +481,12 @@ class TitleState extends MusicBeatState
             case 13:
               addMoreText('Friday');
             case 14:
-              addMoreText('Night');
+              // easter egg for when the game is trending with the wrong spelling
+              // the random intro text would be "trending--only on x"
+
+              if (curWacky[0] == "trending") addMoreText('Nigth');
+              else
+                addMoreText('Night');
             case 15:
               addMoreText('Funkin');
             case 16:

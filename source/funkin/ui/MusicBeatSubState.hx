@@ -43,12 +43,6 @@ class MusicBeatSubState extends FlxSubState implements IEventHandler
     return _conductorInUse = value;
   }
 
-  public function new(bgColor:FlxColor = FlxColor.TRANSPARENT)
-  {
-    super();
-    this.bgColor = bgColor;
-  }
-
   var controls(get, never):Controls;
 
   inline function get_controls():Controls
@@ -99,6 +93,20 @@ class MusicBeatSubState extends FlxSubState implements IEventHandler
     add(backButton);
   }
   #end
+
+  public function new(bgColor:FlxColor = FlxColor.TRANSPARENT)
+  {
+    super();
+    this.bgColor = bgColor;
+
+    initCallbacks();
+  }
+
+  function initCallbacks()
+  {
+    subStateOpened.add(onOpenSubStateComplete);
+    subStateClosed.add(onCloseSubStateComplete);
+  }
 
   override function create():Void
   {

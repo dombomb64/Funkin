@@ -14,10 +14,10 @@ import funkin.ui.freeplay.FreeplayState;
 import funkin.ui.MusicBeatSubState;
 import funkin.ui.story.StoryMenuState;
 import funkin.util.MathUtil;
-import funkin.mobile.util.TouchUtil;
-import openfl.utils.Assets;
 import funkin.effects.RetroCameraFade;
 import flixel.math.FlxPoint;
+import funkin.mobile.util.TouchUtil;
+import openfl.utils.Assets;
 
 /**
  * A substate which renders over the PlayState when the player dies.

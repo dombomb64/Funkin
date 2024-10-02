@@ -26,6 +26,9 @@ import funkin.util.MathUtil;
 import funkin.mobile.util.SwipeUtil;
 import funkin.mobile.util.TouchUtil;
 import openfl.utils.Assets;
+#if FEATURE_DISCORD_RPC
+import funkin.api.discord.DiscordClient;
+#end
 
 class StoryMenuState extends MusicBeatState
 {
@@ -220,7 +223,7 @@ class StoryMenuState extends MusicBeatState
 
     #if FEATURE_DISCORD_RPC
     // Updating Discord Rich Presence
-    DiscordClient.changePresence('In the Menus', null);
+    DiscordClient.instance.setPresence({state: 'In the Menus', details: null});
     #end
 
     #if mobile

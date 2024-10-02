@@ -79,6 +79,7 @@ class CharSelectSubState extends MusicBeatSubState
   var availableChars:Map<Int, String> = new Map<Int, String>();
   var pressedSelect:Bool = false;
   var selectTimer:FlxTimer = new FlxTimer();
+  var allowInput:Bool = false;
 
   var selectSound:FunkinSound;
   var unlockSound:FunkinSound;
@@ -186,6 +187,7 @@ class CharSelectSubState extends MusicBeatSubState
 
     playerChillOut = new CharSelectPlayer(0, 0);
     playerChillOut.switchChar("bf");
+    playerChillOut.visible = false;
     add(playerChillOut);
 
     playerChill = new CharSelectPlayer(0, 0);
@@ -451,6 +453,8 @@ class CharSelectSubState extends MusicBeatSubState
           overrideExisting: true,
           restartTrack: true,
           onLoad: function() {
+            allowInput = true;
+
             @:privateAccess
             gfChill.analyzer = new SpectralAnalyzer(FlxG.sound.music._channel.__audioSource, 7, 0.1);
             #if !web
@@ -561,6 +565,7 @@ class CharSelectSubState extends MusicBeatSubState
 
         nametag.switchChar(char);
         gfChill.switchGF(char);
+        gfChill.visible = true;
 
         var icon = new PixelatedIcon(0, 0);
         icon.setCharacter(char);
@@ -594,6 +599,8 @@ class CharSelectSubState extends MusicBeatSubState
               overrideExisting: true,
               restartTrack: true,
               onLoad: function() {
+                allowInput = true;
+
                 @:privateAccess
                 gfChill.analyzer = new SpectralAnalyzer(FlxG.sound.music._channel.__audioSource, 7, 0.1);
                 #if !web
@@ -663,6 +670,7 @@ class CharSelectSubState extends MusicBeatSubState
 
   function goToFreeplay():Void
   {
+    allowInput = false;
     autoFollow = false;
 
     FlxTween.tween(cursor, {alpha: 0}, 0.8, {ease: FlxEase.expoOut});
@@ -721,7 +729,7 @@ class CharSelectSubState extends MusicBeatSubState
 
     syncAudio(elapsed);
 
-    if (!pressedSelect)
+    if (allowInput && !pressedSelect)
     {
       if (controls.UI_UP #if mobile || SwipeUtil.swipeUp #end) holdTmrUp += elapsed;
       if (controls.UI_UP_R #if mobile || SwipeUtil.swipeUp #end)
@@ -808,18 +816,18 @@ class CharSelectSubState extends MusicBeatSubState
       cursorY = -1;
     }
 
-    if (autoFollow
-      && availableChars.exists(getCurrentSelected())
-      && Save.instance.charactersSeen.contains(availableChars[getCurrentSelected()]))
+    if (availableChars.exists(getCurrentSelected()) && Save.instance.charactersSeen.contains(availableChars[getCurrentSelected()]))
     {
-      gfChill.visible = true;
       curChar = availableChars.get(getCurrentSelected());
 
-      if (!pressedSelect && (controls.ACCEPT #if mobile || TouchUtil.overlapsComplex(cursor) && TouchUtil.justPressed #end))
+      if (allowInput && !pressedSelect && (controls.ACCEPT #if mobile || TouchUtil.overlapsComplex(cursor) && TouchUtil.justPressed #end))
       {
+        spamUp = false;
+        spamDown = false;
+        spamLeft = false;
+        spamRight = false;
+
         cursorConfirmed.visible = true;
-        cursorConfirmed.x = cursor.x - 2;
-        cursorConfirmed.y = cursor.y - 4;
         cursorConfirmed.animation.play("idle", true);
 
         grpCursors.visible = false;
@@ -843,7 +851,7 @@ class CharSelectSubState extends MusicBeatSubState
         });
       }
 
-      if (pressedSelect && controls.BACK)
+      if (allowInput && pressedSelect && controls.BACK)
       {
         cursorConfirmed.visible = false;
         grpCursors.visible = true;
@@ -867,17 +875,15 @@ class CharSelectSubState extends MusicBeatSubState
         selectTimer.cancel();
       }
     }
-    else if (autoFollow)
+    else
     {
       curChar = "locked";
 
       gfChill.visible = false;
 
-      if (controls.ACCEPT #if mobile || TouchUtil.overlapsComplex(cursor) && TouchUtil.justPressed #end)
+      if (allowInput && controls.ACCEPT #if mobile || TouchUtil.overlapsComplex(cursor) && TouchUtil.justPressed #end)
       {
         cursorDenied.visible = true;
-        cursorDenied.x = cursor.x - 2;
-        cursorDenied.y = cursor.y - 4;
 
         playerChill.playAnimation("cannot select Label", true);
 
@@ -913,6 +919,12 @@ class CharSelectSubState extends MusicBeatSubState
 
     cursorDarkBlue.x = MathUtil.coolLerp(cursorDarkBlue.x, cursorLocIntended.x, lerpAmnt * 0.2);
     cursorDarkBlue.y = MathUtil.coolLerp(cursorDarkBlue.y, cursorLocIntended.y, lerpAmnt * 0.2);
+
+    cursorConfirmed.x = cursor.x - 2;
+    cursorConfirmed.y = cursor.y - 4;
+
+    cursorDenied.x = cursor.x - 2;
+    cursorDenied.y = cursor.y - 4;
   }
 
   var bopTimer:Float = 0;
@@ -1077,18 +1089,21 @@ class CharSelectSubState extends MusicBeatSubState
       staticSound.stop();
 
     nametag.switchChar(value);
+    gfChill.visible = false;
     playerChill.visible = false;
     playerChillOut.visible = true;
     playerChillOut.playAnimation("slideout");
     var index = playerChillOut.anim.getFrameLabel("slideout").index;
+    playerChillOut.onAnimationFrame.removeAll();
     playerChillOut.onAnimationFrame.add((_, frame:Int) -> {
-      if (frame == index + 1)
+      if (frame >= index + 1)
       {
         playerChill.visible = true;
         playerChill.switchChar(value);
         gfChill.switchGF(value);
+        gfChill.visible = true;
       }
-      if (frame == index + 2)
+      if (frame >= index + 2)
       {
         playerChillOut.switchChar(value);
         playerChillOut.visible = false;
