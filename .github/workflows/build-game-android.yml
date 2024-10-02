@@ -41,12 +41,13 @@ jobs:
         run: haxelib run lime build android
 
       - name: Make a Zip For Upload
-        run: cd export/release/android/bin/app/build/outputs/apk/debug && zip androidBuild.zip *
+        run: cd export/release/android/bin/app/build/outputs/apk/debug && zip androidBuild.zip * && mv androidBuild.zip ${{ github.workspace }}
 
       - name: Upload Artifact to Google Drive
         uses: mathisve/gdrive-upload-action@main
         with:
-          filename: export/release/android/bin/app/build/outputs/apk/debug/androidBuild.zip
+          filename: androidBuild.zip
+          name: androidBuild.zip
           credentials: ${{ secrets.GDRIVE_CREDENTIALS }}
           folderId: ${{ secrets.GDRIVE_FOLDERID }}
           encoded: true
