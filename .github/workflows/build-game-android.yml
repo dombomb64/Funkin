@@ -26,6 +26,7 @@ jobs:
 
       - name: Install Libraries
         run: |
+          sudo apt-get install p7zip-full -y
           haxelib git hmm https://github.com/FunkinCrew/hmm.git skip-deps --quiet
           haxelib run hmm install --quiet
           haxelib run lime rebuild hxcpp
@@ -41,11 +42,12 @@ jobs:
         run: haxelib run lime build android
 
       - name: Make a Zip For Upload
-        run: cd export/release/android/bin/app/build/outputs/apk/debug && zip androidBuild.zip * && mv androidBuild.zip ${{ github.workspace }}
+        run: cd export/release/android/bin/app/build/outputs/apk/debug && 7z a -tzip -mx=9 androidBuild.zip . && mv androidBuild.zip ${{ github.workspace }}
 
       - name: Upload Artifact to Google Drive
         uses: mathisve/gdrive-upload-action@main
         with:
+          owerwrite: true
           filename: androidBuild.zip
           name: androidBuild.zip
           credentials: ${{ secrets.GDRIVE_CREDENTIALS }}
