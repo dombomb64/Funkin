@@ -36,7 +36,6 @@ jobs:
       - name: Upload Artifact to Google Drive
         uses: mathisve/gdrive-upload-action@main
         with:
-          owerwrite: true
           filename: androidBuild.zip
           name: androidBuild.zip
           credentials: ${{ secrets.GDRIVE_CREDENTIALS }}
