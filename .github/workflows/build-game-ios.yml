@@ -40,17 +40,14 @@ jobs:
         with:
            name: iOSBuild
            path: ${{ github.workspace }}
-
       - name: Upload Artifact to Google Drive
         uses: mathisve/gdrive-upload-action@main
         with:
-          owerwrite: true
           filename: Funkin.ipa
           name: iOSBuild.ipa
           credentials: ${{ secrets.GDRIVE_CREDENTIALS }}
           folderId: ${{ secrets.GDRIVE_FOLDERID }}
           encoded: true
-
       - name: Delete Artifact
         uses: geekyeggo/delete-artifact@v5
         with:
