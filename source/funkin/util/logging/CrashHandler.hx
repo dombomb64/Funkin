@@ -4,6 +4,7 @@ import openfl.Lib;
 import openfl.events.UncaughtErrorEvent;
 import flixel.util.FlxSignal.FlxTypedSignal;
 import flixel.FlxG.FlxRenderMethod;
+import lime.system.System;
 
 /**
  * A custom crash handler that writes to a log file and displays a message box.
@@ -88,11 +89,8 @@ class CrashHandler
       trace('Message: $message');
     }
 
-    #if sys
-    Sys.sleep(1); // wait a few moments of margin to process.
     // Exit the game. Since it threw an error, we use a non-zero exit code.
-    openfl.Lib.application.window.close();
-    #end
+    System.exit(1);
   }
 
   static function displayError(error:UncaughtErrorEvent):Void

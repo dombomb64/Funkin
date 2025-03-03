@@ -14,6 +14,9 @@ import funkin.ui.freeplay.charselect.PlayableCharacter;
 import funkin.data.freeplay.player.PlayerData;
 import funkin.data.freeplay.player.PlayerRegistry;
 import funkin.ui.mainmenu.MainMenuState;
+#if mobile
+import funkin.mobile.util.TouchUtil;
+#end
 
 using flixel.util.FlxSpriteUtil;
 
@@ -111,7 +114,7 @@ class CharacterUnlockState extends MusicBeatState
   {
     super.update(elapsed);
 
-    if (controls.ACCEPT || controls.BACK && !busy)
+    if (controls.ACCEPT || controls.BACK #if mobile || TouchUtil.justPressed #end && !busy)
     {
       busy = true;
       startClose();

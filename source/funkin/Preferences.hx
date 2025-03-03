@@ -211,6 +211,10 @@ class Preferences
     #if web
     toggleFramerateCap(Preferences.unlockedFramerate);
     #end
+    #if mobile
+    // Apply the allowScreenTimeout setting (enables screen timeout).
+    lime.system.System.allowScreenTimeout = Preferences.screenTimeout;
+    #end
   }
 
   static function toggleFramerateCap(unlocked:Bool):Void
@@ -226,18 +230,78 @@ class Preferences
     if (show)
     {
       // Enable the debug display.
+      #if mobile
+      FlxG.game.addChild(Main.fpsCounter);
+      #else
       FlxG.stage.addChild(Main.fpsCounter);
+      #end
+
       #if !html5
+      #if mobile
+      FlxG.game.addChild(Main.memoryCounter);
+      #else
       FlxG.stage.addChild(Main.memoryCounter);
+      #end
       #end
     }
     else
     {
       // Disable the debug display.
+      #if mobile
+      FlxG.game.removeChild(Main.fpsCounter);
+      #else
       FlxG.stage.removeChild(Main.fpsCounter);
+      #end
+
       #if !html5
+      #if mobile
+      FlxG.game.removeChild(Main.memoryCounter);
+      #else
       FlxG.stage.removeChild(Main.memoryCounter);
+      #end
       #end
     }
   }
+
+  #if mobile
+  /**
+   * If enabled, device will be able to sleep on its own.
+   * @default `false`
+   */
+  public static var screenTimeout(get, set):Bool;
+
+  static function get_screenTimeout():Bool
+  {
+    return Save?.instance?.mobileOptions?.screenTimeout ?? false;
+  }
+
+  static function set_screenTimeout(value:Bool):Bool
+  {
+    if (value != Save.instance.mobileOptions.screenTimeout) lime.system.System.allowScreenTimeout = value;
+
+    var save:Save = Save.instance;
+    save.mobileOptions.screenTimeout = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * If enabled, vibration will be enabled.
+   * @default `true`
+   */
+  public static var vibration(get, set):Bool;
+
+  static function get_vibration():Bool
+  {
+    return Save?.instance?.mobileOptions?.vibration ?? true;
+  }
+
+  static function set_vibration(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.mobileOptions.vibration = value;
+    save.flush();
+    return value;
+  }
+  #end
 }

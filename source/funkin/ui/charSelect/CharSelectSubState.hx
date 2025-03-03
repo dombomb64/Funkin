@@ -13,6 +13,7 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
+import flixel.util.FlxColor;
 import funkin.audio.FunkinSound;
 import funkin.data.freeplay.player.PlayerData;
 import funkin.data.freeplay.player.PlayerRegistry;
@@ -36,9 +37,16 @@ import funkin.util.FramesJSFLParser;
 import funkin.util.FramesJSFLParser.FramesJSFLInfo;
 import funkin.util.FramesJSFLParser.FramesJSFLFrame;
 import funkin.graphics.FunkinSprite;
+#if mobile
+import funkin.mobile.util.TouchUtil;
+import funkin.mobile.util.SwipeUtil;
+#end
 
 class CharSelectSubState extends MusicBeatSubState
 {
+  // what the actual hell
+  // having a hard time trying to make my changes work so i chose to be less stubborn and just remove them for now. - Zack
+  // Left this here so somebody can remind me
   var cursor:FlxSprite;
 
   var cursorBlue:FlxSprite;
@@ -88,6 +96,10 @@ class CharSelectSubState extends MusicBeatSubState
 
   var bopInfo:FramesJSFLInfo;
   var blackScreen:FunkinSprite;
+
+  #if mobile
+  var touchBuddy:Null<FlxSprite>;
+  #end
 
   public function new()
   {
@@ -417,6 +429,15 @@ class CharSelectSubState extends MusicBeatSubState
 
       Save.instance.oldChar = true;
     });
+
+    #if mobile
+    touchBuddy = new FlxSprite().makeGraphic(10, 10, FlxColor.GREEN);
+    touchBuddy.cameras = [charSelectCam]; // this is stupid but it works.
+
+    // addBackButton(FlxG.width * 0.96, FlxG.height * 0.84, FlxColor.WHITE, goBack);
+
+    // FlxTween.tween(backButton, {x: 824}, FlxG.random.float(0.5, 0.95), {ease: FlxEase.backOut});
+    #end
   }
 
   function checkNewChar():Void
@@ -436,8 +457,8 @@ class CharSelectSubState extends MusicBeatSubState
 
             @:privateAccess
             gfChill.analyzer = new SpectralAnalyzer(FlxG.sound.music._channel.__audioSource, 7, 0.1);
-            #if desktop
-            // On desktop it uses FFT stuff that isn't as optimized as the direct browser stuff we use on HTML5
+            #if !web
+            // On native it uses FFT stuff that isn't as optimized as the direct browser stuff we use on HTML5
             // So we want to manually change it!
             @:privateAccess
             gfChill.analyzer.fftN = 512;
@@ -582,8 +603,8 @@ class CharSelectSubState extends MusicBeatSubState
 
                 @:privateAccess
                 gfChill.analyzer = new SpectralAnalyzer(FlxG.sound.music._channel.__audioSource, 7, 0.1);
-                #if desktop
-                // On desktop it uses FFT stuff that isn't as optimized as the direct browser stuff we use on HTML5
+                #if !web
+                // On native it uses FFT stuff that isn't as optimized as the direct browser stuff we use on HTML5
                 // So we want to manually change it!
                 @:privateAccess
                 gfChill.analyzer.fftN = 512;
@@ -699,35 +720,40 @@ class CharSelectSubState extends MusicBeatSubState
 
     Conductor.instance.update();
 
-    if (controls.UI_UP_R || controls.UI_DOWN_R || controls.UI_LEFT_R || controls.UI_RIGHT_R) selectSound.pitch = 1;
+    #if mobile
+    if (TouchUtil.pressed) touchBuddy.setPosition(TouchUtil.touch.screenX, TouchUtil.touch.screenY);
+    #end
+
+    if (controls.UI_UP_R || controls.UI_DOWN_R || controls.UI_LEFT_R || controls.UI_RIGHT_R #if mobile || SwipeUtil.swipeUp || SwipeUtil.swipeDown
+      || SwipeUtil.swipeLeft || SwipeUtil.swipeRight #end) selectSound.pitch = 1;
 
     syncAudio(elapsed);
 
     if (allowInput && !pressedSelect)
     {
-      if (controls.UI_UP) holdTmrUp += elapsed;
-      if (controls.UI_UP_R)
+      if (controls.UI_UP #if mobile || SwipeUtil.swipeUp #end) holdTmrUp += elapsed;
+      if (controls.UI_UP_R #if mobile || SwipeUtil.swipeUp #end)
       {
         holdTmrUp = 0;
         spamUp = false;
       }
 
-      if (controls.UI_DOWN) holdTmrDown += elapsed;
-      if (controls.UI_DOWN_R)
+      if (controls.UI_DOWN #if mobile || SwipeUtil.swipeDown #end) holdTmrDown += elapsed;
+      if (controls.UI_DOWN_R #if mobile || SwipeUtil.swipeDown #end)
       {
         holdTmrDown = 0;
         spamDown = false;
       }
 
-      if (controls.UI_LEFT) holdTmrLeft += elapsed;
-      if (controls.UI_LEFT_R)
+      if (controls.UI_LEFT #if mobile || SwipeUtil.swipeLeft #end) holdTmrLeft += elapsed;
+      if (controls.UI_LEFT_R #if mobile || SwipeUtil.swipeLeft #end)
       {
         holdTmrLeft = 0;
         spamLeft = false;
       }
 
-      if (controls.UI_RIGHT) holdTmrRight += elapsed;
-      if (controls.UI_RIGHT_R)
+      if (controls.UI_RIGHT #if mobile || SwipeUtil.swipeRight #end) holdTmrRight += elapsed;
+      if (controls.UI_RIGHT_R #if mobile || SwipeUtil.swipeRight #end)
       {
         holdTmrRight = 0;
         spamRight = false;
@@ -740,7 +766,7 @@ class CharSelectSubState extends MusicBeatSubState
       if (holdTmrLeft >= initSpam) spamLeft = true;
       if (holdTmrRight >= initSpam) spamRight = true;
 
-      if (controls.UI_UP_P)
+      if (controls.UI_UP_P #if mobile || SwipeUtil.swipeUp #end)
       {
         cursorY -= 1;
         cursorDenied.visible = false;
@@ -749,14 +775,14 @@ class CharSelectSubState extends MusicBeatSubState
 
         selectSound.play(true);
       }
-      if (controls.UI_DOWN_P)
+      if (controls.UI_DOWN_P #if mobile || SwipeUtil.swipeDown #end)
       {
         cursorY += 1;
         cursorDenied.visible = false;
         holdTmrDown = 0;
         selectSound.play(true);
       }
-      if (controls.UI_LEFT_P)
+      if (controls.UI_LEFT_P #if mobile || SwipeUtil.swipeLeft #end)
       {
         cursorX -= 1;
         cursorDenied.visible = false;
@@ -764,7 +790,7 @@ class CharSelectSubState extends MusicBeatSubState
         holdTmrLeft = 0;
         selectSound.play(true);
       }
-      if (controls.UI_RIGHT_P)
+      if (controls.UI_RIGHT_P #if mobile || SwipeUtil.swipeRight #end)
       {
         cursorX += 1;
         cursorDenied.visible = false;
@@ -794,7 +820,7 @@ class CharSelectSubState extends MusicBeatSubState
     {
       curChar = availableChars.get(getCurrentSelected());
 
-      if (allowInput && !pressedSelect && controls.ACCEPT)
+      if (allowInput && !pressedSelect && (controls.ACCEPT #if mobile || TouchUtil.overlapsComplex(cursor) && TouchUtil.justPressed #end))
       {
         spamUp = false;
         spamDown = false;
@@ -855,7 +881,7 @@ class CharSelectSubState extends MusicBeatSubState
 
       gfChill.visible = false;
 
-      if (allowInput && controls.ACCEPT)
+      if (allowInput && controls.ACCEPT #if mobile || TouchUtil.overlapsComplex(cursor) && TouchUtil.justPressed #end)
       {
         cursorDenied.visible = true;
 

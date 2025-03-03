@@ -25,6 +25,12 @@ import funkin.save.Save;
 import funkin.save.Save.SaveScoreData;
 import flixel.util.FlxColor;
 import funkin.ui.PixelatedIcon;
+#if mobile
+import funkin.mobile.util.TouchUtil;
+import funkin.mobile.util.SwipeUtil;
+#end
+
+using StringTools;
 
 class SongMenuItem extends FlxSpriteGroup
 {
@@ -82,6 +88,11 @@ class SongMenuItem extends FlxSpriteGroup
   public var sparkle:FlxSprite;
 
   var sparkleTimer:FlxTimer;
+
+  #if mobile
+  public var theActualHitbox:FlxSprite;
+  public var confirmed:Bool;
+  #end
 
   public function new(x:Float, y:Float)
   {
@@ -232,6 +243,13 @@ class SongMenuItem extends FlxSpriteGroup
     weekNumbers.push(weekNumber);
 
     setVisibleGrp(false);
+
+    #if mobile
+    theActualHitbox = new FlxSprite(capsule.x + 140,
+      capsule.y - 40).makeGraphic(Std.int(capsule.width / 1.4), Std.int(capsule.height / 1.4), FlxColor.TRANSPARENT);
+    theActualHitbox.active = false;
+    add(theActualHitbox);
+    #end
   }
 
   function sparkleEffect(timer:FlxTimer):Void
@@ -625,26 +643,10 @@ class SongMenuItem extends FlxSpriteGroup
   {
     if (impactThing != null) impactThing.angle = capsule.angle;
 
-    // if (FlxG.keys.justPressed.I)
-    // {
-    //   newText.y -= 1;
-    //   trace(this.x - newText.x, this.y - newText.y);
-    // }
-    // if (FlxG.keys.justPressed.J)
-    // {
-    //   newText.x -= 1;
-    //   trace(this.x - newText.x, this.y - newText.y);
-    // }
-    // if (FlxG.keys.justPressed.L)
-    // {
-    //   newText.x += 1;
-    //   trace(this.x - newText.x, this.y - newText.y);
-    // }
-    // if (FlxG.keys.justPressed.K)
-    // {
-    //   newText.y += 1;
-    //   trace(this.x - newText.x, this.y - newText.y);
-    // }
+    #if mobile
+    if (selected && !confirmed && TouchUtil.overlaps(theActualHitbox, camera) && !SwipeUtil.swipeAny && TouchUtil.justReleased) onConfirm();
+    #end
+
     if (doJumpIn)
     {
       frameInTicker += elapsed;
@@ -702,6 +704,7 @@ class SongMenuItem extends FlxSpriteGroup
     {
       pixelIcon.animation.play('confirm');
     }
+    #if mobile confirmed = true; #end
   }
 
   public function intendedY(index:Int):Float
@@ -722,7 +725,7 @@ class SongMenuItem extends FlxSpriteGroup
     grayscaleShader.setAmount(this.selected ? 0 : 0.8);
     songText.alpha = this.selected ? 1 : 0.6;
     songText.blurredText.visible = this.selected ? true : false;
-    capsule.offset.x = this.selected ? 0 : -5;
+    capsule.offset.x = this.selected ? 0 : -5; // oh god
     capsule.animation.play(this.selected ? "selected" : "unselected");
     ranking.alpha = this.selected ? 1 : 0.7;
     favIcon.alpha = this.selected ? 1 : 0.6;

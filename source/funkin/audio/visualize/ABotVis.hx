@@ -56,8 +56,8 @@ class ABotVis extends FlxTypedSpriteGroup<FlxSprite>
     @:privateAccess
     analyzer = new SpectralAnalyzer(snd._channel.__audioSource, 7, 0.1, 40);
 
-    #if desktop
-    // On desktop it uses FFT stuff that isn't as optimized as the direct browser stuff we use on HTML5
+    #if !web
+    // On non web it uses FFT stuff that isn't as optimized as the direct browser stuff we use on HTML5
     // So we want to manually change it!
     analyzer.fftN = 256;
     #end

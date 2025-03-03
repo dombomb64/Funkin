@@ -117,6 +117,15 @@ class Save
             },
         },
 
+      #if mobile
+      mobileOptions:
+        {
+          // Reasonable defaults.
+          screenTimeout: false,
+          vibration: true
+        },
+      #end
+
       mods:
         {
           // No mods enabled.
@@ -165,6 +174,18 @@ class Save
   {
     return data.options;
   }
+
+  #if mobile
+  /**
+   * NOTE: Modifications will not be saved without calling `Save.flush()`!
+   */
+  public var mobileOptions(get, never):SaveDataMobileOptions;
+
+  function get_mobileOptions():SaveDataMobileOptions
+  {
+    return data.mobileOptions;
+  }
+  #end
 
   /**
    * NOTE: Modifications will not be saved without calling `Save.flush()`!
@@ -1177,7 +1198,14 @@ typedef RawSaveData =
   var options:SaveDataOptions;
 
   var unlocks:SaveDataUnlocks;
-
+  
+  #if mobile
+  /**
+   * The user's preferences for mobile.
+   */
+  var mobileOptions:SaveDataMobileOptions;
+  #end
+  
   /**
    * The user's favorited songs in the Freeplay menu,
    * as a list of song IDs.
@@ -1371,6 +1399,23 @@ typedef SaveDataOptions =
         };
     };
 };
+
+#if mobile
+typedef SaveDataMobileOptions =
+{
+  /**
+   * If enabled, device will be able to sleep on its own.
+   * @default `false`
+   */
+  var screenTimeout:Bool;
+
+  /**
+   * If enabled, vibration will be enabled.
+   * @default `true`
+   */
+  var vibration:Bool;
+};
+#end
 
 /**
  * An anonymous structure containing a specific player's bound keys.

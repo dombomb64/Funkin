@@ -31,6 +31,7 @@ class Project extends HXProject {
 	 * The game's name. Used as the default window title.
 	 */
 	static final TITLE:String = "Friday Night Funkin'";
+  static final TITLEIOS:String = "FridayNightFunkin";
 
 	/**
 	 * The name of the generated executable file.
@@ -288,7 +289,7 @@ class Project extends HXProject {
 	 * as well as info like the package name and company (used by various app stores).
 	 */
 	function configureApp() {
-		this.meta.title = TITLE;
+		this.meta.title = (isIOS()) ? TITLEIOS : TITLE;
 		this.meta.version = VERSION;
 		this.meta.packageName = PACKAGE_NAME;
 		this.meta.company = COMPANY;
@@ -344,10 +345,14 @@ class Project extends HXProject {
 
 		if (isMobile()) {
 			this.window.orientation = Orientation.LANDSCAPE;
-			this.window.fullscreen = false;
+			this.window.fullscreen = true;
 			this.window.resizable = false;
 			this.window.width = 0;
 			this.window.height = 0;
+		}
+
+		if (isAndroid()) {
+			this.excludeArchitectures.push(Architecture.ARMV7);
 		}
 	}
 
@@ -488,20 +493,20 @@ class Project extends HXProject {
 
 		// Should be true only on web builds.
 		// Audio context issues only exist there.
-		TOUCH_HERE_TO_PLAY.apply(this, isWeb());
+		TOUCH_HERE_TO_PLAY.apply(this, isWeb() || isMobile());
 
 		// Should be true only on web builds.
 		// Enabling embedding and preloading is required to preload assets properly.
 		EMBED_ASSETS.apply(this, isWeb());
 		PRELOAD_ALL.apply(this, !isWeb());
 
-		// Should be true except on MacOS.
+		// Should be true except on MacOS and Mobile.
 		// File drop doesn't work there.
-		FEATURE_FILE_DROP.apply(this, !isMac());
+		FEATURE_FILE_DROP.apply(this, !(isMac() || isMobile()));
 
-		// Should be true except on web builds.
+		// Should be true except on web and mobile builds.
 		// Chart editor doesn't work there.
-		FEATURE_CHART_EDITOR.apply(this, !isWeb());
+		FEATURE_CHART_EDITOR.apply(this, !(isWeb() || isMobile()));
 
 		// Should be true except on web builds.
 		// Screenshots doesn't work there.
@@ -624,8 +629,8 @@ class Project extends HXProject {
 
   function configureHaxelibs() {
 		// Don't enforce
-    addHaxelib('lime'); // Game engine backend
-    addHaxelib('openfl'); // Game engine backend
+    // addHaxelib('lime'); // Game engine backend
+    // addHaxelib('openfl'); // Game engine backend
 
     addHaxelib('flixel'); // Game engine
 
@@ -649,11 +654,14 @@ class Project extends HXProject {
 			addHaxelib('hxcpp-debug-server'); // VSCode debug support
 		}
 
-    if (isDesktop() && !isHashLink() && FEATURE_VIDEO_PLAYBACK.isEnabled(this)) {
-      // hxCodec doesn't function on HashLink or non-desktop platforms
+    if (isDesktop() || isMobile() && !isHashLink() && FEATURE_VIDEO_PLAYBACK.isEnabled(this)) {
+      // hxvlc doesn't function on HashLink or non-desktop platforms
 			// It's also unnecessary if video playback is disabled
-      addHaxelib('hxCodec'); // Video playback
+      addHaxelib('hxvlc'); // Video playback
     }
+
+    if (isAndroid())
+       addHaxelib('extension-androidtools'); // Android Functions
 
 		if (FEATURE_DISCORD_RPC.isEnabled(this)) {
 			addHaxelib('hxdiscord_rpc'); // Discord API
@@ -1050,6 +1058,8 @@ class Project extends HXProject {
 		// Sys.println(message);
 		// Sys.stdout().writeString(message);
 		// Sys.stderr().writeString(message);
+		if(!isDisplay())
+			trace(message);
 	}
 }
 

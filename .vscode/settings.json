@@ -90,6 +90,8 @@
   "haxecheckstyle.configurationFile": "checkstyle.json",
   "haxecheckstyle.codeSimilarityBufferSize": 100,
 
+  "lime.projectFile": "project.hxp",
+
   "lime.targetConfigurations": [
     {
       "label": "Windows / Debug",
@@ -186,9 +188,9 @@
       "args": ["-debug", "-DANIMDEBUG", "-DFEATURE_DEBUG_FUNCTIONS"]
     },
     {
-      "label": "Windows / Debug (Debug hxCodec)",
+      "label": "Windows / Debug (Debug hxvlc)",
       "target": "windows",
-      "args": ["-debug", "-DHXC_LIBVLC_LOGGING", "-DFEATURE_DEBUG_FUNCTIONS"]
+      "args": ["-debug", "-DHXVLC_LOGGING", "-DFEATURE_DEBUG_FUNCTIONS"]
     },
     {
       "label": "HashLink / Debug (Straight to Animation Editor)",

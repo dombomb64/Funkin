@@ -14,6 +14,11 @@ import funkin.graphics.shaders.HSVShader;
 import funkin.util.WindowUtil;
 import funkin.audio.FunkinSound;
 import funkin.input.Controls;
+#if mobile
+import funkin.mobile.ui.FunkinBackspace;
+import funkin.mobile.util.TouchUtil;
+#end
+import flixel.util.FlxColor;
 
 class OptionsState extends MusicBeatState
 {
@@ -54,8 +59,13 @@ class OptionsState extends MusicBeatState
     else
     {
       // No need to show Options page
+      #if mobile
+      preferences.onExit.add(exitToMainMenu);
+      setPage(Preferences);
+      #else
       controls.onExit.add(exitToMainMenu);
       setPage(Controls);
+      #end
     }
 
     super.create();
@@ -119,9 +129,17 @@ class Page extends FlxGroup
   public var canExit = true;
 
   var controls(get, never):Controls;
+  var currentName(default, set):PageName = Options;
 
   inline function get_controls()
     return PlayerSettings.player1.controls;
+
+  function set_currentName(value:PageName):PageName
+    return currentName = value;
+
+  #if mobile
+  var backButton:FunkinBackspace;
+  #end
 
   var subState:FlxSubState;
 
@@ -144,7 +162,8 @@ class Page extends FlxGroup
 
   function updateEnabled(elapsed:Float)
   {
-    if (canExit && controls.BACK)
+    // This fucking auto-formatter sucks and i REFUSE to make this more than 1 variable
+    if (canExit && (controls.BACK #if mobile || (backButton != null && TouchUtil.overlapsComplex(backButton) && TouchUtil.justPressed) #end))
     {
       exit();
       FunkinSound.playOnce(Paths.sound('cancelMenu'));
@@ -184,6 +203,15 @@ class OptionsMenu extends Page
 
     add(items = new TextMenuList());
     createItem("PREFERENCES", function() switchPage(Preferences));
+    #if mobile
+    if (FlxG.gamepads.numActiveGamepads > 0)
+    {
+      createItem("CONTROLS", function() switchPage(Controls));
+      createItem("INPUT OFFSETS", function() {
+        FlxG.state.openSubState(new LatencyState());
+      });
+    }
+    #else
     createItem("CONTROLS", function() switchPage(Controls));
     createItem("INPUT OFFSETS", function() {
       #if web
@@ -192,6 +220,7 @@ class OptionsMenu extends Page
       FlxG.state.openSubState(new LatencyState());
       #end
     });
+    #end
 
     #if newgrounds
     if (NGio.isLoggedIn) createItem("LOGOUT", selectLogout);

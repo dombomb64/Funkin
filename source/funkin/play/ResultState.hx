@@ -34,6 +34,9 @@ import funkin.save.Save.SaveScoreData;
 import funkin.graphics.shaders.LeftMaskShader;
 import funkin.play.components.TallyCounter;
 import funkin.play.components.ClearPercentCounter;
+#if mobile
+import funkin.mobile.util.TouchUtil;
+#end
 
 /**
  * The state for the results screen after a song or week is finished.
@@ -728,7 +731,7 @@ class ResultState extends MusicBeatSubState
       speedOfTween.x -= 0.1;
     }
 
-    if (controls.PAUSE)
+    if (controls.PAUSE #if mobile || TouchUtil.justPressed #end)
     {
       if (introMusicAudio != null) {
         @:nullSafety(Off)

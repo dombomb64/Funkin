@@ -33,6 +33,10 @@ import openfl.net.NetStream;
 import funkin.api.newgrounds.NGio;
 import openfl.display.BlendMode;
 import funkin.save.Save;
+#if mobile
+import funkin.mobile.util.TouchUtil;
+import funkin.mobile.util.SwipeUtil;
+#end
 
 #if desktop
 #end
@@ -226,7 +230,6 @@ class TitleState extends MusicBeatState
 
   function playMenuMusic():Void
   {
-    var shouldFadeIn:Bool = (FlxG.sound.music == null);
     // Load music. Includes logic to handle BPM changes.
     FunkinSound.playMusic('freakyMenu',
       {
@@ -236,6 +239,7 @@ class TitleState extends MusicBeatState
         // Continue playing this music between states, until a different music track gets played.
         persist: true
       });
+    var shouldFadeIn:Bool = (FlxG.sound.music != null);
     // Fade from 0.0 to 1 over 4 seconds
     if (shouldFadeIn) FlxG.sound.music.fadeIn(4.0, 0.0, 1.0);
   }
@@ -277,15 +281,6 @@ class TitleState extends MusicBeatState
 
     Conductor.instance.update();
 
-    /* if (FlxG.onMobile)
-          {
-      if (gfDance != null)
-      {
-        gfDance.x = (FlxG.width / 2) + (FlxG.accelerometer.x * (FlxG.width / 2));
-        // gfDance.y = (FlxG.height / 2) + (FlxG.accelerometer.y * (FlxG.height / 2));
-      }
-          }
-     */
     if (FlxG.keys.justPressed.I)
     {
       FlxTween.tween(outlineShaderShit, {funnyX: 50, funnyY: 50}, 0.6, {ease: FlxEase.quartOut});
@@ -303,7 +298,7 @@ class TitleState extends MusicBeatState
     if (FlxG.sound.music != null) Conductor.instance.update(FlxG.sound.music.time);
 
     // do controls.PAUSE | controls.ACCEPT instead?
-    var pressedEnter:Bool = FlxG.keys.justPressed.ENTER;
+    var pressedEnter:Bool = FlxG.keys.justPressed.ENTER #if mobile || (TouchUtil.justReleased && !SwipeUtil.swipeAny) #end;
 
     var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
 
@@ -349,8 +344,9 @@ class TitleState extends MusicBeatState
     }
     if (pressedEnter && !skippedIntro && initialized) skipIntro();
 
-    if (controls.UI_LEFT) swagShader.update(-elapsed * 0.1);
-    if (controls.UI_RIGHT) swagShader.update(elapsed * 0.1);
+    // TODO: Maybe use the dxdy method for swiping instead.
+    if (controls.UI_LEFT #if mobile || SwipeUtil.swipeLeft #end) swagShader.update(-elapsed * 0.1);
+    if (controls.UI_RIGHT #if mobile || SwipeUtil.swipeRight #end) swagShader.update(elapsed * 0.1);
     if (!cheatActive && skippedIntro) cheatCodeShit();
     super.update(elapsed);
   }
@@ -366,13 +362,10 @@ class TitleState extends MusicBeatState
 
   function cheatCodeShit():Void
   {
-    if (FlxG.keys.justPressed.ANY)
-    {
-      if (controls.NOTE_DOWN_P || controls.UI_DOWN_P) codePress(FlxDirectionFlags.DOWN);
-      if (controls.NOTE_UP_P || controls.UI_UP_P) codePress(FlxDirectionFlags.UP);
-      if (controls.NOTE_LEFT_P || controls.UI_LEFT_P) codePress(FlxDirectionFlags.LEFT);
-      if (controls.NOTE_RIGHT_P || controls.UI_RIGHT_P) codePress(FlxDirectionFlags.RIGHT);
-    }
+    if (controls.NOTE_DOWN_P || controls.UI_DOWN_P #if mobile || SwipeUtil.swipeUp #end) codePress(FlxDirectionFlags.DOWN);
+    if (controls.NOTE_UP_P || controls.UI_UP_P #if mobile || SwipeUtil.swipeDown #end) codePress(FlxDirectionFlags.UP);
+    if (controls.NOTE_LEFT_P || controls.UI_LEFT_P #if mobile || SwipeUtil.swipeLeft #end) codePress(FlxDirectionFlags.LEFT);
+    if (controls.NOTE_RIGHT_P || controls.UI_RIGHT_P #if mobile || SwipeUtil.swipeRight #end) codePress(FlxDirectionFlags.RIGHT);
   }
 
   function codePress(input:Int)
@@ -425,7 +418,9 @@ class TitleState extends MusicBeatState
   {
     if (credGroup == null || textGroup == null) return;
 
-    lime.ui.Haptic.vibrate(100, 100);
+    #if mobile
+    if (Preferences.vibration) lime.ui.Haptic.vibrate(100, 100);
+    #end
 
     var coolText:AtlasText = new AtlasText(0, 0, text.trim(), AtlasFont.BOLD);
     coolText.screenCenter(X);
