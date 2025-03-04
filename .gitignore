@@ -3,7 +3,7 @@
 .vs/
 APIStuff.hx
 dump/
-export/
+export/release/*
 RECOVER_*.fla
 shitAudio/
 .build_time
@@ -14,3 +14,6 @@ node_modules/
 package.json
 package-lock.json
 .aider*
+
+# Xcode project
+!export/release/ios/

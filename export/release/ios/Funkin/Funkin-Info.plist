@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key><true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	
+        <key>UIFileSharingEnabled</key>
+	<string>true</string>
+        <key>com.apple.developer.kernel.increased-memory-limit</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<string>true</string>
+        <key>NSBluetoothAlwaysUsageDescription</key>
+        <string>To play with controller accept bluetooth permission.</string>
+	<key>CFBundleDisplayName</key>
+	<string>FridayNightFunkin</string>
+	<key>CFBundleExecutable</key>
+	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleIdentifier</key>
+	<string>me.funkin.fnf</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>${PRODUCT_NAME}</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.5.3</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>5738</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	
+	<key>UIRequiredDeviceCapabilities</key>
+	<dict>
+		<key>arm64</key>
+		<true/>
+	</dict>
+	<key>UIStatusBarHidden</key>
+	<true/>
+	<key>UIRequiresFullScreen</key>
+	<true/>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array><string>UIInterfaceOrientationLandscapeLeft</string><string>UIInterfaceOrientationLandscapeRight</string></array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>ITSAppUsesNonExemptEncryption</key><true />
+</dict>
+</plist>
