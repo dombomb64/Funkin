@@ -149,7 +149,7 @@
       "type": "git",
       "dir": null,
       "ref": "dev-funkin-arm64",
-      "url": "https://github.com/FunkinDroidTeam/lime"
+      "url": "https://github.com/FunkinCrew/lime"
     },
     {
       "name": "mconsole",
