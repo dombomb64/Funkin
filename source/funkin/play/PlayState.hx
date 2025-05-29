@@ -2195,7 +2195,9 @@ class PlayState extends MusicBeatSubState
       var hitWindowCenter = note.strumTime + Conductor.instance.inputOffset;
       var hitWindowEnd = note.strumTime + Conductor.instance.inputOffset + Constants.HIT_WINDOW_MS;
 
-      if (Conductor.instance.songPosition > hitWindowEnd)
+      var songPosition = Conductor.instance.songPosition - Conductor.instance.combinedOffset;
+
+      if (songPosition > hitWindowEnd)
       {
         if (note.hasMissed || note.hasBeenHit) continue;
 
@@ -2208,7 +2210,7 @@ class PlayState extends MusicBeatSubState
           note.holdNoteSprite.missedNote = true;
         }
       }
-      else if (Conductor.instance.songPosition > hitWindowCenter)
+      else if (songPosition > hitWindowCenter)
       {
         if (note.hasBeenHit) continue;
 
@@ -2230,7 +2232,7 @@ class PlayState extends MusicBeatSubState
           opponentStrumline.playNoteHoldCover(note.holdNoteSprite);
         }
       }
-      else if (Conductor.instance.songPosition > hitWindowStart)
+      else if (songPosition > hitWindowStart)
       {
         if (note.hasBeenHit || note.hasMissed) continue;
 
@@ -2287,11 +2289,13 @@ class PlayState extends MusicBeatSubState
         continue;
       }
 
-      var hitWindowStart = note.strumTime - Constants.HIT_WINDOW_MS;
-      var hitWindowCenter = note.strumTime;
-      var hitWindowEnd = note.strumTime + Constants.HIT_WINDOW_MS;
+      var hitWindowStart = note.strumTime + Conductor.instance.inputOffset - Constants.HIT_WINDOW_MS;
+      var hitWindowCenter = note.strumTime + Conductor.instance.inputOffset;
+      var hitWindowEnd = note.strumTime + Conductor.instance.inputOffset + Constants.HIT_WINDOW_MS;
 
-      if (Conductor.instance.songPosition > hitWindowEnd)
+      var songPosition = Conductor.instance.songPosition - Conductor.instance.combinedOffset;
+
+      if (songPosition > hitWindowEnd)
       {
         if (note.hasMissed || note.hasBeenHit) continue;
         note.tooEarly = false;
@@ -2302,7 +2306,7 @@ class PlayState extends MusicBeatSubState
           note.holdNoteSprite.missedNote = true;
         }
       }
-      else if (isBotPlayMode && Conductor.instance.songPosition > hitWindowCenter)
+      else if (isBotPlayMode && songPosition > hitWindowCenter)
       {
         if (note.hasBeenHit) continue;
 
@@ -2326,7 +2330,7 @@ class PlayState extends MusicBeatSubState
           playerStrumline.playNoteHoldCover(note.holdNoteSprite);
         }
       }
-      else if (Conductor.instance.songPosition > hitWindowStart)
+      else if (songPosition > hitWindowStart)
       {
         note.tooEarly = false;
         note.mayHit = true;
