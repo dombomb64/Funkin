@@ -6,6 +6,7 @@ import flixel.graphics.FlxGraphic;
 import flixel.tweens.FlxTween;
 import openfl.display3D.textures.TextureBase;
 import funkin.graphics.framebuffer.FixedBitmapData;
+import funkin.graphics.FunkinAnimationController;
 import openfl.display.BitmapData;
 import flixel.math.FlxRect;
 import flixel.math.FlxPoint;
@@ -38,6 +39,7 @@ class FunkinSprite extends FlxSprite
   public function new(?x:Float = 0, ?y:Float = 0)
   {
     super(x, y);
+    animation = new FunkinAnimationController(this);
   }
 
   /**
