@@ -69,6 +69,11 @@ class SustainTrail extends FlxSprite
   public var indices:DrawData<Int> = new DrawData<Int>();
 
   /**
+   * A `Vector` of integers, where each one defines a color.
+   */
+  public var colors:DrawData<Int> = new DrawData<Int>();
+
+  /**
    * A `Vector` of normalized coordinates used to apply texture mapping.
    */
   public var uvtData:DrawData<Float> = new DrawData<Float>();
@@ -433,6 +438,9 @@ class SustainTrail extends FlxSprite
     hitNote = false;
     missedNote = false;
     handledMiss = false;
+
+    color = 0xFFFFFF;
+    shader = null;
   }
 
   override public function destroy():Void
