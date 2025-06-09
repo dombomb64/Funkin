@@ -123,7 +123,7 @@ class ChartEditorEventSprite extends FlxSprite
   public function correctAnimationName(name:String):String
   {
     if (this.animation.exists(name)) return name;
-    trace('Warning: Invalid animation name "${name}" for song event. Using "${DEFAULT_EVENT}"');
+    // trace('Warning: Invalid animation name "${name}" for song event. Using "${DEFAULT_EVENT}"'); // YOU TOO.
     return DEFAULT_EVENT;
   }
 
