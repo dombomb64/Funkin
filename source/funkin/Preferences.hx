@@ -1,7 +1,10 @@
 package funkin;
 
-#if mobile
+#if FEATURE_TOUCH_CONTROLS
 import funkin.mobile.ui.FunkinHitbox;
+import funkin.mobile.ui.FunkinHitbox.FunkinHitboxControlSchemes;
+#end
+#if mobile
 import funkin.mobile.util.InAppPurchasesUtil;
 #end
 import funkin.save.Save;
@@ -528,7 +531,9 @@ class Preferences
     save.flush();
     return value;
   }
+  #end
 
+  #if FEATURE_TOUCH_CONTROLS
   /**
    * Controls Scheme for the hitbox.
    * @default `4 Lanes`
@@ -547,6 +552,9 @@ class Preferences
     save.flush();
     return value;
   }
+  #end
+
+  #if mobile
 
   #if FEATURE_MOBILE_IAP
   /**

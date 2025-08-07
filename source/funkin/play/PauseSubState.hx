@@ -155,7 +155,7 @@ class PauseSubState extends MusicBeatSubState
   // Graphics Variables
   // ===============
 
-  #if mobile
+  #if FEATURE_TOUCH_CONTROLS
   /**
    * The pause button for the game, only appears in Mobile targets. Shows up breifly to finish the pause animation.
    */
@@ -363,7 +363,7 @@ class PauseSubState extends MusicBeatSubState
     background.updateHitbox();
     add(background);
 
-    #if mobile
+    #if FEATURE_TOUCH_CONTROLS
     pauseButton = FunkinSprite.createSparrow(0, 0, "pauseButton");
     pauseButton.animation.addByIndices('idle', 'pause', [0], "", 24, false);
     pauseButton.animation.addByIndices('hold', 'pause', [5], "", 24, false);
@@ -535,18 +535,19 @@ class PauseSubState extends MusicBeatSubState
   {
     FlxTween.tween(background, {alpha: 0.6}, 0.8, {ease: FlxEase.quartOut});
 
-    #if mobile
+    #if FEATURE_HAPTICS
     HapticUtil.vibrate(0, 0.05, 0.5);
 
+    hapticTimer.start(0.2, function(_) {
+      HapticUtil.vibrate(0, 0.01, 0.5);
+    });
+    #end
+    #if FEATURE_TOUCH_CONTROLS
     pauseButton.animation.play("confirm");
     pauseCircle.scale.set(0.84 * 1.4, 0.8 * 1.4);
     pauseCircle.alpha = 0.4;
     FlxTween.tween(pauseCircle.scale, {x: 0.84 * 0.8, y: 0.8 * 0.8}, 0.4, {ease: FlxEase.backInOut});
     FlxTween.tween(pauseCircle, {alpha: 0}, 0.6, {ease: FlxEase.quartOut});
-
-    hapticTimer.start(0.2, function(_) {
-      HapticUtil.vibrate(0, 0.01, 0.5);
-    });
 
     dataFadeTimer.start(0.3, function(_) {
       transitionMetadataIn();

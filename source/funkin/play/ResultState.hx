@@ -40,14 +40,14 @@ import funkin.graphics.ScriptedFunkinSprite;
 #if FEATURE_NEWGROUNDS
 import funkin.api.newgrounds.Medals;
 #end
-#if mobile
+#if FEATURE_TOUCH_CONTROLS
 import funkin.util.TouchUtil;
+#end
 #if FEATURE_MOBILE_ADVERTISEMENTS
 import funkin.mobile.util.AdMobUtil;
 #end
 #if FEATURE_MOBILE_IAR
 import funkin.mobile.util.InAppReviewUtil;
-#end
 #end
 import funkin.util.DeviceUtil;
 
@@ -770,7 +770,7 @@ class ResultState extends MusicBeatSubState
       }
     }
 
-    if (controls.PAUSE || controls.ACCEPT #if mobile || TouchUtil.pressAction() #end)
+    if (controls.PAUSE || controls.ACCEPT #if FEATURE_TOUCH_CONTROLS || TouchUtil.pressAction() #end)
     {
       if (busy) return;
       if (_parentState is funkin.ui.debug.results.ResultsDebugSubState)

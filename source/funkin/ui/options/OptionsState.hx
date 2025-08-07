@@ -20,10 +20,10 @@ import funkin.input.Controls;
 #if FEATURE_NEWGROUNDS
 import funkin.api.newgrounds.NewgroundsClient;
 #end
-#if mobile
+#if FEATURE_TOUCH_CONTROLS
 import funkin.util.TouchUtil;
-import funkin.mobile.ui.FunkinBackButton;
 import funkin.mobile.input.ControlsHandler;
+import funkin.mobile.ui.FunkinBackButton;
 import funkin.mobile.ui.options.ControlsSchemeMenu;
 #end
 #if FEATURE_MOBILE_IAP
@@ -100,7 +100,7 @@ class OptionsState extends MusicBeatState
     }
 
     super.create();
-    #if mobile
+    #if FEATURE_TOUCH_CONTROLS
     addHitbox();
     hitbox.visible = false;
     #end

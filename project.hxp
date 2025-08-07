@@ -777,7 +777,8 @@ class Project extends HXProject
     EXCLUDE_ARMV7.apply(this, false);
 
     // Should be true unless explicitly requested.
-    HARDCODED_CREDITS.apply(this, true);
+    //HARDCODED_CREDITS.apply(this, true);
+    HARDCODED_CREDITS.apply(this, false);
     UNLOCK_EVERYTHING.apply(this, true);
 
     // Should be true only on web builds.
@@ -792,7 +793,8 @@ class Project extends HXProject
     TESTING_ADS.apply(this, isDebug() && FEATURE_MOBILE_ADVERTISEMENTS.isEnabled(this));
 
     // Should be true on mobile builds.
-    CENSOR_EXPLETIVES.apply(this, isMobile());
+    //CENSOR_EXPLETIVES.apply(this, isMobile());
+    CENSOR_EXPLETIVES.apply(this, false);
 
     //
     // FEATURE FLAGS
@@ -846,18 +848,24 @@ class Project extends HXProject
     FEATURE_TOUCH_HERE_TO_PLAY.apply(this, isWeb());
 
     // Should be true only on mobile builds.
-    FEATURE_HAPTICS.apply(this, isMobile());
+    //FEATURE_HAPTICS.apply(this, isMobile());
+    FEATURE_HAPTICS.apply(this, true);
     FEATURE_TOUCH_CONTROLS.apply(this, isMobile());
+    //FEATURE_TOUCH_CONTROLS.apply(this, true);
 
     // Should be true only on mobile release builds. Remember you can add the flag manually for testing.
-    FEATURE_MOBILE_ADVERTISEMENTS.apply(this, (isMobile() && isRelease() && envConfig != null));
-    FEATURE_MOBILE_IAP.apply(this, (isMobile() && isRelease() && envConfig != null));
-    FEATURE_MOBILE_IAR.apply(this, (isMobile() && isRelease()));
+    //FEATURE_MOBILE_ADVERTISEMENTS.apply(this, (isMobile() && isRelease() && envConfig != null));
+    FEATURE_MOBILE_ADVERTISEMENTS.apply(this, false);
+    //FEATURE_MOBILE_IAP.apply(this, (isMobile() && isRelease() && envConfig != null));
+    FEATURE_MOBILE_IAP.apply(this, false);
+    //FEATURE_MOBILE_IAR.apply(this, (isMobile() && isRelease()));
+    FEATURE_MOBILE_IAR.apply(this, false);
 
     // The coveted ghost tapping feature.
     // Essential on mobile but delayed on desktop.
     // Please send targeted harassment to PhantomArcade about this.
-    FEATURE_GHOST_TAPPING.apply(this, isMobile());
+    //FEATURE_GHOST_TAPPING.apply(this, isMobile());
+    FEATURE_GHOST_TAPPING.apply(this, true);
 
     // Enable ASTC Compressed textures for mobile.
     // Since mobile is pretty memory safe (I'm looking at you Apple...) we need them BADLY to have the game run properly.
@@ -938,6 +946,7 @@ class Project extends HXProject
     // Forcibly include all Funkin' classes in builds.
     // This prevents classes that are unused by the base game from being unavailable to HScript.
     addHaxeMacro("include('funkin', true, ['funkin.mobile.*'])");
+    //addHaxeMacro("include('funkin')");
 
     if (isMobile())
     {

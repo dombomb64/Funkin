@@ -37,8 +37,10 @@ import funkin.api.discord.DiscordClient;
 #if FEATURE_NEWGROUNDS
 import funkin.api.newgrounds.NewgroundsClient;
 #end
-#if mobile
+#if FEATURE_TOUCH_CONTROLS
 import funkin.mobile.input.ControlsHandler;
+#end
+#if mobile
 import funkin.mobile.util.InAppPurchasesUtil;
 #end
 
@@ -444,7 +446,7 @@ class MainMenuState extends MusicBeatState
 
   function startExitState(state:NextState):Void
   {
-    #if mobile
+    #if FEATURE_TOUCH_CONTROLS
     // This just softlocks the menu items and prevents any further interaction.. needs testing with keyboard.
     if (!canInteract && !ControlsHandler.usingExternalInputDevice) return;
     #end
@@ -467,7 +469,7 @@ class MainMenuState extends MusicBeatState
         }
       });
 
-      #if mobile
+      #if FEATURE_TOUCH_CONTROLS
       if (optionsButton != null) FlxTween.tween(optionsButton, {alpha: 0}, duration, {ease: FlxEase.quadOut});
       if (backButton != null) FlxTween.tween(backButton, {alpha: 0}, duration, {ease: FlxEase.quadOut});
       #end
@@ -508,7 +510,7 @@ class MainMenuState extends MusicBeatState
     handleInputs();
     if (menuItems != null)
     {
-      #if mobile
+      #if FEATURE_TOUCH_CONTROLS
       // if (optionsButton != null) optionsButton.active = canInteract && (!menuItems.busy && !goingBack);
       // if (backButton != null) backButton.active = canInteract && (!menuItems.busy && !goingToOptions);
       #end

@@ -224,7 +224,7 @@ class StoryMenuState extends MusicBeatState
     DiscordClient.instance.setPresence({state: 'In the Menus', details: null});
     #end
 
-    #if mobile
+    #if FEATURE_TOUCH_CONTROLS
     addBackButton(FlxG.width - 230, FlxG.height - 170, FlxColor.WHITE, goBack, 0.7);
     #end
 

@@ -8,7 +8,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import flixel.text.FlxText;
 import flixel.text.FlxText.FlxTextAlign;
-#if mobile
+#if FEATURE_TOUCH_CONTROLS
 import funkin.util.TouchUtil;
 #end
 
@@ -78,24 +78,24 @@ class CapsuleOptionsMenu extends FlxSpriteGroup
     if (!busy)
     {
       @:privateAccess
-      if (parent.controls.BACK #if mobile || TouchUtil.pressAction(parent.backButton) #end)
+      if (parent.controls.BACK #if FEATURE_TOUCH_CONTROLS || TouchUtil.pressAction(parent.backButton) #end)
       {
         close();
         return;
       }
 
-      if (parent.getControls().UI_LEFT_P #if mobile || TouchUtil.pressAction(leftArrow) #end)
+      if (parent.getControls().UI_LEFT_P #if FEATURE_TOUCH_CONTROLS || TouchUtil.pressAction(leftArrow) #end)
       {
         currentInstrumentalIndex = (currentInstrumentalIndex + 1) % instrumentalIds.length;
         changedInst = true;
       }
-      if (parent.getControls().UI_RIGHT_P #if mobile || TouchUtil.pressAction(rightArrow) #end)
+      if (parent.getControls().UI_RIGHT_P #if FEATURE_TOUCH_CONTROLS || TouchUtil.pressAction(rightArrow) #end)
       {
         currentInstrumentalIndex = (currentInstrumentalIndex - 1 + instrumentalIds.length) % instrumentalIds.length;
         changedInst = true;
       }
       if (parent.getControls()
-        .ACCEPT #if mobile
+        .ACCEPT #if FEATURE_TOUCH_CONTROLS
         || ((TouchUtil.pressAction(currentInstrumental))
           && !(TouchUtil.overlapsComplex(leftArrow) || TouchUtil.overlapsComplex(rightArrow))) #end)
       {

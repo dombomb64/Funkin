@@ -4,7 +4,7 @@ import funkin.ui.MenuList.MenuTypedList;
 import funkin.ui.TextMenuList.TextMenuItem;
 import funkin.util.GRhythmUtil;
 import funkin.mobile.ui.FunkinBackButton;
-#if mobile
+#if FEATURE_TOUCH_CONTROLS
 import funkin.mobile.ui.FunkinHitbox;
 import funkin.mobile.ui.FunkinHitbox.FunkinHitboxControlSchemes;
 import funkin.mobile.input.ControlsHandler;
@@ -295,7 +295,7 @@ class OffsetMenu extends Page<OptionsState.OptionsMenuPageName>
       // Reset calibration state and start another one.
 
       jumpInText.text = 'Press any key to the beat!\nThe arrow will start to sync to the receptor.';
-      #if mobile
+      #if FEATURE_TOUCH_CONTROLS
       jumpInText.text = 'Tap to the beat!\nThe arrow will start to sync to the receptor.';
       #end
 
@@ -395,7 +395,7 @@ class OffsetMenu extends Page<OptionsState.OptionsMenuPageName>
       {
       #end
         testStrumline.y = Preferences.downscroll ? FlxG.height - (testStrumline.height + 45) - Constants.STRUMLINE_Y_OFFSET : (testStrumline.height / 2)
-        - Constants.STRUMLINE_Y_OFFSET;
+          - Constants.STRUMLINE_Y_OFFSET;
         if (Preferences.downscroll) jumpInText.y = FlxG.height - 425;
         testStrumline.isDownscroll = Preferences.downscroll;
       #if mobile
@@ -427,8 +427,8 @@ class OffsetMenu extends Page<OptionsState.OptionsMenuPageName>
   }
 
   /**
-   * Callback executed when one of the note keys is pressed.
-   */
+     * Callback executed when one of the note keys is pressed.
+     */
   function onKeyPress(event:PreciseInputEvent):Void
   {
     // Do the minimal possible work here.
@@ -436,8 +436,8 @@ class OffsetMenu extends Page<OptionsState.OptionsMenuPageName>
   }
 
   /**
-   * Callback executed when one of the note keys is released.
-   */
+     * Callback executed when one of the note keys is released.
+     */
   function onKeyRelease(event:PreciseInputEvent):Void
   {
     // Do the minimal possible work here.
@@ -449,7 +449,7 @@ class OffsetMenu extends Page<OptionsState.OptionsMenuPageName>
   {
     backButton.enabled = false;
     shouldOffset = -1;
-    #if mobile
+    #if FEATURE_TOUCH_CONTROLS
     if (OptionsState.instance.hitbox != null) OptionsState.instance.hitbox.visible = false;
     #end
     tempOffset = 0;
@@ -513,11 +513,11 @@ class OffsetMenu extends Page<OptionsState.OptionsMenuPageName>
   var _lastDirection:Int = 0;
 
   /* Adds a difference in milliseconds to the list.
-    If there are more than 4 differences, it calculates the average and sets the global offset.
-    This is used for calibrating the offset based on user input.
-    @param ms The difference in milliseconds to add.
-    @see Preferences.globalOffset
-   */
+      If there are more than 4 differences, it calculates the average and sets the global offset.
+      This is used for calibrating the offset based on user input.
+      @param ms The difference in milliseconds to add.
+      @see Preferences.globalOffset
+     */
   public function addDifference(ms:Float):Void
   {
     differences.push(ms);
@@ -839,9 +839,9 @@ class OffsetMenu extends Page<OptionsState.OptionsMenuPageName>
     }
 
     /*debugBeatText.x = receptor.x + receptor.width * 2;
-      debugBeatText.y = receptor.y - 20;
-
-          debugBeatText.text = 'Beat: ' + b; */
+        debugBeatText.y = receptor.y - 20;
+  
+            debugBeatText.text = 'Beat: ' + b; */
 
     // receptor.angle += angleVel * elapsed;
 
@@ -902,9 +902,9 @@ class OffsetMenu extends Page<OptionsState.OptionsMenuPageName>
   }
 
   /**
-   * PreciseInputEvents are put into a queue between update() calls,
-   * and then processed here.
-   */
+     * PreciseInputEvents are put into a queue between update() calls,
+     * and then processed here.
+     */
   function processInputQueue():Void
   {
     if (inputPressQueue.length + inputReleaseQueue.length == 0 || shouldOffset != 1) return;

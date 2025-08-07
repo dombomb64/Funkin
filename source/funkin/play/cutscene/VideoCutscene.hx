@@ -89,7 +89,7 @@ class VideoCutscene
 
     VideoCutscene.cutsceneType = cutsceneType;
 
-    #if mobile
+    #if FEATURE_TOUCH_CONTROLS
     if (cutsceneType == ENDING)
     {
       PlayState.instance.togglePauseButton();

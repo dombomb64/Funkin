@@ -154,7 +154,7 @@ class Save
                 },
             },
         },
-      #if mobile
+      #if FEATURE_TOUCH_CONTROLS
       mobileOptions:
         {
           // Reasonable defaults.
@@ -221,7 +221,7 @@ class Save
     return data.options;
   }
 
-  #if mobile
+  #if FEATURE_TOUCH_CONTROLS
   /**
    * NOTE: Modifications will not be saved without calling `Save.flush()`!
    */
@@ -1442,7 +1442,7 @@ typedef RawSaveData =
 
   var unlocks:SaveDataUnlocks;
 
-  #if mobile
+  #if FEATURE_TOUCH_CONTROLS
   /**
    * The user's preferences for mobile.
    */
@@ -1688,7 +1688,7 @@ typedef SaveDataOptions =
     };
 };
 
-#if mobile
+#if FEATURE_TOUCH_CONTROLS
 typedef SaveDataMobileOptions =
 {
   /**

@@ -16,9 +16,9 @@ import funkin.ui.TextMenuList.TextMenuItem;
 import funkin.ui.options.items.CheckboxPreferenceItem;
 import funkin.ui.options.items.NumberPreferenceItem;
 import funkin.ui.options.items.EnumPreferenceItem;
-#if mobile
-import funkin.mobile.ui.FunkinBackButton;
+#if FEATURE_TOUCH_CONTROLS
 import funkin.mobile.input.ControlsHandler;
+import funkin.mobile.ui.FunkinBackButton;
 import funkin.mobile.ui.FunkinHitbox.FunkinHitboxControlSchemes;
 import funkin.util.TouchUtil;
 import funkin.util.SwipeUtil;
@@ -115,8 +115,7 @@ class PreferencesMenu extends Page<OptionsState.OptionsMenuPageName>
     createPrefItemCheckbox('Downscroll', 'If enabled, this will make the notes move downwards.', function(value:Bool):Void {
       Preferences.downscroll = value;
     },
-      Preferences.downscroll, #if mobile ControlsHandler.hasExternalInputDevice
-      || Preferences.controlsScheme != FunkinHitboxControlSchemes.Arrows #end);
+      Preferences.downscroll, #if FEATURE_TOUCH_CONTROLS ControlsHandler.hasExternalInputDevice || Preferences.controlsScheme != FunkinHitboxControlSchemes.Arrows #end);
     createPrefItemPercentage('Strumline Background', 'Give the strumline a semi-transparent background', function(value:Int):Void {
       Preferences.strumlineBackgroundOpacity = value;
     }, Preferences.strumlineBackgroundOpacity);

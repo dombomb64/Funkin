@@ -89,7 +89,12 @@ class TouchUtil
 
     if (camera == null) camera = object.cameras[0];
 
-    @:privateAccess
+    /*if (Std.isOfType(object, flixel.FlxSprite))
+      {
+        var spr:flixel.FlxSprite = cast object;
+        trace(spr.toString());
+    }*/ @:privateAccess
+
     return object.overlapsPoint(touch.getWorldPosition(camera, object._point), true, camera);
 
     return false;

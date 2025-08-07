@@ -13,11 +13,11 @@ import funkin.util.SortUtil;
 import funkin.util.WindowUtil;
 import flixel.util.FlxSort;
 import funkin.input.Controls;
-#if mobile
+#if FEATURE_TOUCH_CONTROLS
 import funkin.graphics.FunkinCamera;
+import funkin.mobile.ui.FunkinBackButton;
 import funkin.mobile.ui.FunkinHitbox;
 import funkin.mobile.input.PreciseInputHandler;
-import funkin.mobile.ui.FunkinBackButton;
 import funkin.play.notes.NoteDirection;
 #end
 
@@ -50,7 +50,7 @@ class MusicBeatSubState extends FlxSubState implements IEventHandler
   inline function get_controls():Controls
     return PlayerSettings.player1.controls;
 
-  #if mobile
+  #if FEATURE_TOUCH_CONTROLS
   public var hitbox:Null<FunkinHitbox>;
   public var backButton:Null<FunkinBackButton>;
   public var camControls:Null<FunkinCamera>;
@@ -128,8 +128,12 @@ class MusicBeatSubState extends FlxSubState implements IEventHandler
   {
     super.destroy();
 
-    #if mobile
-    if (camControls != null) FlxG.cameras.remove(camControls);
+    #if FEATURE_TOUCH_CONTROLS
+    if (camControls != null)
+    {
+      FlxG.cameras.remove(camControls);
+      // if (backButton != null) backButton.cameras = [];
+    }
     #end
 
     Conductor.beatHit.remove(this.beatHit);
