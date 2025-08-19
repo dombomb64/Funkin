@@ -2,6 +2,7 @@ package funkin.play.notes;
 
 import funkin.play.notes.notestyle.NoteStyle;
 import funkin.data.song.SongData.SongNoteData;
+import funkin.mobile.ui.FunkinHitbox.FunkinHitboxControlSchemes;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
@@ -76,8 +77,6 @@ class SustainTrail extends FlxSprite
    * A `Vector` of normalized coordinates used to apply texture mapping.
    */
   public var uvtData:DrawData<Float> = new DrawData<Float>();
-
-  private var processedGraphic:FlxGraphic;
 
   private var zoom:Float = 1;
 
@@ -214,11 +213,12 @@ class SustainTrail extends FlxSprite
     graphicHeight = sustainHeight(sustainLength, parentStrumline?.scrollSpeed ?? 1.0);
     // instead of scrollSpeed, PlayState.SONG.speed
 
-    flipY = Preferences.downscroll;
+    flipY = Preferences.downscroll #if mobile
+    || (Preferences.controlsScheme == FunkinHitboxControlSchemes.Arrows
+      && !funkin.mobile.input.ControlsHandler.usingExternalInputDevice) #end;
 
     // alpha = 0.6;
     alpha = 1.0;
-    // calls updateColorTransform(), which initializes processedGraphic!
     updateColorTransform();
 
     updateClipping();
@@ -288,7 +288,7 @@ class SustainTrail extends FlxSprite
       return;
     }
 
-    var clipHeight:Float = FlxMath.bound(sustainHeight(sustainLength - (songTime - strumTime), parentStrumline?.scrollSpeed ?? 1.0), 0, graphicHeight);
+    var clipHeight:Float = sustainHeight(sustainLength - (songTime - strumTime), parentStrumline?.scrollSpeed ?? 1.0).clamp(0, graphicHeight);
     if (clipHeight <= 0.1)
     {
       visible = false;
@@ -447,7 +447,6 @@ class SustainTrail extends FlxSprite
     vertices = null;
     indices = null;
     uvtData = null;
-    processedGraphic.destroy();
 
     super.destroy();
   }
