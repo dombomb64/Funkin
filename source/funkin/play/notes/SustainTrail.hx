@@ -78,8 +78,6 @@ class SustainTrail extends FlxSprite
    */
   public var uvtData:DrawData<Float> = new DrawData<Float>();
 
-  private var processedGraphic:FlxGraphic;
-
   private var zoom:Float = 1;
 
   /**
@@ -221,7 +219,6 @@ class SustainTrail extends FlxSprite
 
     // alpha = 0.6;
     alpha = 1.0;
-    // calls updateColorTransform(), which initializes processedGraphic!
     updateColorTransform();
 
     updateClipping();
@@ -451,7 +448,6 @@ class SustainTrail extends FlxSprite
     vertices = null;
     indices = null;
     uvtData = null;
-    processedGraphic.destroy();
 
     super.destroy();
   }
