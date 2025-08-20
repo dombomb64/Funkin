@@ -524,37 +524,11 @@ class BaseCharacter extends Bopper
     if (event.eventCanceled) return;
     curNoteKind = NoteKindManager.getNoteKind(event.note.noteData.kind);
 
-    if (event.note.noteData.getMustHitNote() && characterType == BF)
+    if (event.note.parentStrumline.characters.contains(this))
     {
-      if (curNoteKind != null)
-      {
-        if (!curNoteKind.noanim)
-        {
-          this.playSingAnimation(event.note.noteData.getDirection(), false, curNoteKind?.suffix);
-          holdTimer = 0;
-        }
-      }
-      else
-      {
-        this.playSingAnimation(event.note.noteData.getDirection(), false);
-        holdTimer = 0;
-      }
-    }
-    else if (!event.note.noteData.getMustHitNote() && characterType == DAD)
-    {
-      if (curNoteKind != null)
-      {
-        if (!curNoteKind.noanim)
-        {
-          this.playSingAnimation(event.note.noteData.getDirection(), false, curNoteKind?.suffix);
-          holdTimer = 0;
-        }
-      }
-      else
-      {
-        this.playSingAnimation(event.note.noteData.getDirection(), false);
-        holdTimer = 0;
-      }
+      // If the strumline controls this character, play the sing animation.
+      this.playSingAnimation(event.note.noteData.getDirection(), false);
+      holdTimer = 0;
     }
     else if (characterType == GF && event.note.noteData.getMustHitNote())
     {
@@ -579,14 +553,9 @@ class BaseCharacter extends Bopper
     // If another script cancelled the event, don't do anything.
     if (event.eventCanceled) return;
 
-    if (event.note.noteData.getMustHitNote() && characterType == BF)
+    if (event.note.parentStrumline.characters.contains(this))
     {
-      // If the note is from the same strumline, play the miss animation.
-      this.playSingAnimation(event.note.noteData.getDirection(), true);
-    }
-    else if (!event.note.noteData.getMustHitNote() && characterType == DAD)
-    {
-      // If the note is from the same strumline, play the miss animation.
+      // If the strumline controls this character, play the miss animation.
       this.playSingAnimation(event.note.noteData.getDirection(), true);
     }
     else if (event.note.noteData.getMustHitNote() && characterType == GF)
@@ -602,14 +571,9 @@ class BaseCharacter extends Bopper
     // If another script cancelled the event, don't do anything.
     if (event.eventCanceled) return;
 
-    if (event.holdNote.noteData.getMustHitNote() && characterType == BF)
+    if (event.holdNote.parentStrumline.characters.contains(this))
     {
-      // If the note is from the same strumline, play the miss animation.
-      this.playSingAnimation(event.holdNote.noteData.getDirection(), true);
-    }
-    else if (!event.holdNote.noteData.getMustHitNote() && characterType == DAD)
-    {
-      // If the note is from the same strumline, play the miss animation.
+      // If the strumline controls this character, play the miss animation.
       this.playSingAnimation(event.holdNote.noteData.getDirection(), true);
     }
     else if (event.holdNote.noteData.getMustHitNote() && event.isComboBreak && characterType == GF)
@@ -663,9 +627,9 @@ class BaseCharacter extends Bopper
       return;
     }
 
-    if (characterType == BF)
+    if (event.strumline?.characters.contains(this))
     {
-      // If the note is from the same strumline, play the sing animation.
+      // If the strumline controls this character, play the miss animation.
       // trace('Playing ghost miss animation...');
       this.playSingAnimation(event.dir, true);
     }
