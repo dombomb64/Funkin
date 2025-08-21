@@ -15,6 +15,7 @@ import funkin.play.notes.NoteSplash;
 import funkin.play.notes.NoteSprite;
 import funkin.play.notes.SustainTrail;
 import funkin.play.notes.NoteVibrationsHandler;
+import funkin.play.notes.NoteVibrationsHandler.NoteStatus;
 import funkin.data.song.SongData.SongNoteData;
 import funkin.input.PreciseInputManager;
 import funkin.util.SortUtil;
@@ -213,7 +214,22 @@ class Strumline extends FlxSpriteGroup
   var ghostTapTimer:Float = 0.0;
   #end
 
-  public var noteVibrations:NoteVibrationsHandler = new NoteVibrationsHandler();
+  /**
+   * The `NoteVibrationsHandler` reading from all the strumlines.
+   * There should be only one of these.
+   */
+  public var noteVibrations:NoteVibrationsHandler;
+
+  /**
+   * An array of each note status.
+   * Made for use with `NoteVibrationsHandler`.
+   */
+  public var noteStatuses:Array<NoteStatus> = [];
+
+  /**
+   * Whether or not this strumline has haptic feedback.
+   */
+  public var hasVibrations:Bool = false;
 
   final inArrowControlSchemeMode:Bool = #if mobile (Preferences.controlsScheme == FunkinHitboxControlSchemes.Arrows
     && !ControlsHandler.usingExternalInputDevice) #else false #end;
@@ -311,6 +327,8 @@ class Strumline extends FlxSpriteGroup
       this.strumlineNotes.add(child);
 
       heldKeys.push(false);
+
+      noteStatuses.push(NoteStatus.idle);
     }
 
     strumlineScale.set(1, 1);
@@ -679,7 +697,7 @@ class Strumline extends FlxSpriteGroup
       else if (holdNote.hitNote && holdNote.sustainLength <= 0)
       {
         // Hold note is completed, kill it.
-        if (isPlayer)
+        if (hasVibrations)
         {
           // Hold note's final vibration.
           noteVibrations.tryHoldNoteVibration(true);
@@ -805,7 +823,7 @@ class Strumline extends FlxSpriteGroup
       }
 
       // Added this to prevent sustained vibrations not ending issue.
-      if (!isKeyHeld(dir) && isPlayer) noteVibrations.noteStatuses[dir] = NoteStatus.idle;
+      if (!isKeyHeld(dir) && hasVibrations) noteStatuses[dir] = NoteStatus.idle;
     }
   }
 
@@ -1041,7 +1059,7 @@ class Strumline extends FlxSpriteGroup
   {
     getByDirection(direction).playStatic();
 
-    if (isPlayer) noteVibrations.noteStatuses[direction] = NoteStatus.idle;
+    if (hasVibrations) noteStatuses[direction] = NoteStatus.idle;
   }
 
   /**
@@ -1052,7 +1070,7 @@ class Strumline extends FlxSpriteGroup
   {
     getByDirection(direction).playPress();
 
-    if (isPlayer) noteVibrations.noteStatuses[direction] = NoteStatus.pressed;
+    if (hasVibrations) noteStatuses[direction] = NoteStatus.pressed;
   }
 
   /**
@@ -1063,7 +1081,7 @@ class Strumline extends FlxSpriteGroup
   {
     getByDirection(direction).playConfirm();
 
-    if (isPlayer) noteVibrations.noteStatuses[direction] = NoteStatus.confirm;
+    if (hasVibrations) noteStatuses[direction] = NoteStatus.confirm;
   }
 
   /**
@@ -1074,7 +1092,7 @@ class Strumline extends FlxSpriteGroup
   {
     getByDirection(direction).holdConfirm();
 
-    if (isPlayer) noteVibrations.noteStatuses[direction] = NoteStatus.holdConfirm;
+    if (hasVibrations) noteStatuses[direction] = NoteStatus.holdConfirm;
   }
 
   /**
