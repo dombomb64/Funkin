@@ -353,7 +353,7 @@ class FreeplayState extends MusicBeatSubState
     #end
 
     // Block input until the intro finishes.
-    controls.active = false;
+    // controls.active = false;
 
     // Add a null entry that represents the RANDOM option
     songs.push(null);
@@ -1483,7 +1483,7 @@ class FreeplayState extends MusicBeatSubState
 
   function enterFromCharSel():Void
   {
-    controls.active = false;
+    // controls.active = false;
     if (_parentState != null) _parentState.persistentDraw = false;
 
     var transitionGradient = new FlxSprite(0, 720).loadGraphic(Paths.image('freeplay/transitionGradient'));
@@ -1731,7 +1731,7 @@ class FreeplayState extends MusicBeatSubState
           changeSelection(upP ? -1 : 1);
         }
       }
-      else if (spamTimer >= 0.9)
+      else if (spamTimer >= 0.2)
       {
         spamming = true;
       }
@@ -2206,7 +2206,7 @@ class FreeplayState extends MusicBeatSubState
     {
       if (currentCapsule != null)
       {
-        controls.active = false;
+        // controls.active = false;
         currentCapsule.doLerp = false;
 
         var movement:Float = (change > 0) ? 15 : -15;
@@ -2223,12 +2223,12 @@ class FreeplayState extends MusicBeatSubState
       diff.visible = true;
       final newX:Int = (change > 0) ? -320 : 500;
 
-      controls.active = false;
+      // controls.active = false;
       FlxTween.tween(diff, {x: newX + (CUTOUT_WIDTH * DJ_POS_MULTI)}, 0.2,
         {
           ease: FlxEase.circInOut,
           onComplete: function(_) {
-            controls.active = true;
+            // controls.active = true;
             diff.x = 90 + (CUTOUT_WIDTH * DJ_POS_MULTI);
             diff.visible = false;
           }
@@ -2852,7 +2852,7 @@ class FreeplayState extends MusicBeatSubState
         FunkinSound.playOnce(Paths.sound('fav'), 1);
         grpCapsules.members[realShit].checkClip();
         grpCapsules.members[realShit].selected = true; // set selected again, so it can run its getter function to initialize movement
-        controls.active = false;
+        // controls.active = false;
 
         grpCapsules.members[realShit].doLerp = false;
         FlxTween.tween(grpCapsules.members[realShit], {y: grpCapsules.members[realShit].y - 5}, 0.1, {ease: FlxEase.expoOut});
@@ -2879,7 +2879,7 @@ class FreeplayState extends MusicBeatSubState
           grpCapsules.members[realShit].selected = true; // set selected again, so it can run its getter function to initialize movement
         });
 
-        controls.active = false;
+        // controls.active = false;
         grpCapsules.members[realShit].doLerp = false;
         FlxTween.tween(grpCapsules.members[realShit], {y: grpCapsules.members[realShit].y + 5}, 0.1, {ease: FlxEase.expoOut});
         FlxTween.tween(grpCapsules.members[realShit], {y: grpCapsules.members[realShit].y - 5}, 0.1,
@@ -3117,7 +3117,7 @@ class FreeplaySongData
   {
     return Save.instance.isSongFavorited(idAndVariation);
   }
-  
+
   public function isDifficultyNew(difficulty:String):Bool
   {
     // grabs a specific difficulty's new status. used for the difficulty dots.
