@@ -564,11 +564,6 @@ class PlayState extends MusicBeatSubState
   }
 
   /**
-   * Controls vibrations for all strumlines with `hasVibrations` enabled.
-   */
-  public var noteVibrations:NoteVibrationsHandler = new NoteVibrationsHandler();
-
-  /**
    * The camera which contains, and controls visibility of, the user interface elements.
    */
   public var camHUD:FlxCamera;
@@ -1807,7 +1802,7 @@ class PlayState extends MusicBeatSubState
     iconP2?.onStepHit(Std.int(Conductor.instance.currentStep));
 
     // Try to call hold note haptics each step hit. Works if atleast one note status is NoteStatus.isHoldNotePressed.
-    noteVibrations.tryHoldNoteVibration();
+    NoteVibrationsHandler.instance.tryHoldNoteVibration();
 
     return true;
   }
@@ -2213,10 +2208,8 @@ class PlayState extends MusicBeatSubState
     }
     #end
 
-    noteVibrations.strumlines.push(playerStrumline);
-    noteVibrations.strumlines.push(opponentStrumline);
-    playerStrumline.noteVibrations = noteVibrations;
-    opponentStrumline.noteVibrations = noteVibrations;
+    NoteVibrationsHandler.instance.strumlines.push(playerStrumline);
+    NoteVibrationsHandler.instance.strumlines.push(opponentStrumline);
     playerStrumline.hasVibrations = !isBotPlayMode;
 
     if (!PlayStatePlaylist.isStoryMode)
@@ -2814,7 +2807,7 @@ class PlayState extends MusicBeatSubState
           strumline.pressKey(note.direction);
 
           // Try vibrations in case any botted strumlines have them enabled.
-          noteVibrations.tryNoteVibration();
+          NoteVibrationsHandler.instance.tryNoteVibration();
 
           if (note.holdNoteSprite != null)
           {
@@ -3079,7 +3072,7 @@ class PlayState extends MusicBeatSubState
     inputPressQueue = [];
     inputReleaseQueue = [];
 
-    noteVibrations.tryNoteVibration();
+    NoteVibrationsHandler.instance.tryNoteVibration();
   }
 
   function goodNoteHit(note:NoteSprite, input:PreciseInputEvent, ?strumline:Strumline):Void
@@ -3753,6 +3746,7 @@ class PlayState extends MusicBeatSubState
     for (strumline in strumlines)
     {
       strumline.skipFadingArrows();
+      NoteVibrationsHandler.instance.strumlines.remove(strumline);
     }
 
     if (overrideMusic)
