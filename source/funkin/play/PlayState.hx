@@ -518,6 +518,7 @@ class PlayState extends MusicBeatSubState
 
   /**
    * The sprite group containing active players' strumline notes.
+   * Setting this will automatically try to add the stage's player character to the start of `playerStrumline.characters`.
    */
   public var playerStrumline(get, set):Strumline;
 
@@ -528,11 +529,30 @@ class PlayState extends MusicBeatSubState
 
   function set_playerStrumline(value:Strumline):Strumline
   {
-    return strumlines[0] = value;
+    strumlines[0] = value;
+    // Add the player character to the strumline's list of characters.
+    var boyfriend:Null<BaseCharacter> = currentStage?.getBoyfriend();
+    if (boyfriend != null)
+    {
+      // Remove the character if they were in the array already.
+      value.characters.remove(boyfriend);
+      // Add the character to the start of the array just in case a script references the first entry expecting this character.
+      value.characters.unshift(boyfriend);
+    }
+    // Add the player vocals to the strumline's list of vocals.
+    if (vocals?.playerVoices != null) @:nullSafety(Off)
+    {
+      // Remove the vocals if they were in the array already.
+      value.vocals.remove(vocals.playerVoices);
+      // Add the vocals to the start of the array just in case a script references the first entry expecting these vocals.
+      value.vocals.unshift(vocals.playerVoices);
+    }
+    return value;
   }
 
   /**
    * The sprite group containing opponents' strumline notes.
+   * Setting this will automatically try to add the stage's opponent character to the start of `opponentStrumline.characters`.
    */
   public var opponentStrumline(get, set):Strumline;
 
@@ -543,7 +563,25 @@ class PlayState extends MusicBeatSubState
 
   function set_opponentStrumline(value:Strumline):Strumline
   {
-    return strumlines[1] = value;
+    strumlines[1] = value;
+    // Add the opponent character to the strumline's list of characters.
+    var dad:Null<BaseCharacter> = currentStage?.getDad();
+    if (dad != null)
+    {
+      // Remove the character if they were in the array already.
+      value.characters.remove(dad);
+      // Add the character to the start of the array just in case a script references the first entry expecting this character.
+      value.characters.unshift(dad);
+    }
+    // Add the opponent vocals to the strumline's list of vocals.
+    if (vocals?.opponentVoices != null) @:nullSafety(Off)
+    {
+      // Remove the vocals if they were in the array already.
+      value.vocals.remove(vocals.opponentVoices);
+      // Add the vocals to the start of the array just in case a script references the first entry expecting these vocals.
+      value.vocals.unshift(vocals.opponentVoices);
+    }
+    return value;
   }
 
   /**
@@ -740,12 +778,6 @@ class PlayState extends MusicBeatSubState
     var nulNoteStyle:Null<NoteStyle> = NoteStyleRegistry.instance.fetchEntry(noteStyleId ?? Constants.DEFAULT_NOTE_STYLE);
     if (nulNoteStyle == null) throw "Failed to retrieve both note style and default note style. This shouldn't happen!";
     noteStyle = nulNoteStyle;
-
-    // Strumlines
-    @:nullSafety(Off)
-    playerStrumline = new Strumline(noteStyle, !isBotPlayMode, currentChart?.scrollSpeed);
-    @:nullSafety(Off)
-    opponentStrumline = new Strumline(noteStyle, false, currentChart?.scrollSpeed);
 
     // Healthbar
     healthBarBG = FunkinSprite.create(0, 0, 'healthBar');
@@ -2116,14 +2148,14 @@ class PlayState extends MusicBeatSubState
      */
   function initStrumlines():Void
   {
-    playerStrumline.onNoteIncoming.add(onStrumlineNoteIncoming);
-    opponentStrumline.onNoteIncoming.add(onStrumlineNoteIncoming);
+    // Create strumlines here so that their constructors can reference this instance.
+    @:nullSafety(Off)
+    playerStrumline = new Strumline(noteStyle, !isBotPlayMode, currentChart?.scrollSpeed);
+    @:nullSafety(Off)
+    opponentStrumline = new Strumline(noteStyle, false, currentChart?.scrollSpeed);
+
     add(playerStrumline);
     add(opponentStrumline);
-    var boyfriend:Null<BaseCharacter> = currentStage?.getBoyfriend();
-    if (boyfriend != null) playerStrumline.characters.push(boyfriend);
-    var dad:Null<BaseCharacter> = currentStage?.getDad();
-    if (dad != null) opponentStrumline.characters.push(dad);
 
     final cutoutSize = FullScreenScaleMode.gameCutoutSize.x / 2.5;
     // Position the player strumline on the right half of the screen
@@ -2149,21 +2181,16 @@ class PlayState extends MusicBeatSubState
     }
     #end
 
-    NoteVibrationsHandler.instance.strumlines.push(playerStrumline);
-    NoteVibrationsHandler.instance.strumlines.push(opponentStrumline);
-    playerStrumline.hasVibrations = !isBotPlayMode;
-
-    if (!PlayStatePlaylist.isStoryMode)
+    if (!PlayStatePlaylist.isStoryMode) for (strumline in strumlines)
     {
-      playerStrumline.fadeInArrows();
-      opponentStrumline.fadeInArrows();
+      strumline.fadeInArrows();
     }
   }
 
+  #if mobile
   /**
      * Configures the position of strumline for the default control scheme
      */
-  #if mobile
   function initNoteHitbox()
   {
     final amplification:Float = (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
@@ -2756,30 +2783,33 @@ class PlayState extends MusicBeatSubState
         // It might still be on screen.
         if (note.hasMissed && !note.handledMiss)
         {
-          // Call an event to allow canceling the note miss.
-          // NOTE: This is what handles the character animations!
-          var event:NoteScriptEvent = new NoteScriptEvent(NOTE_MISS, note, Constants.HEALTH_MISS_PENALTY, Highscore.tallies.combo, true);
-          dispatchEvent(event);
-
-          // Calling event.cancelEvent() skips all the other logic! Neat!
-          if (event.eventCanceled) continue;
-
-          // Skip scoring the miss for bots!
-          if (strumline.isPlayer)
+          if (strumline.canMiss)
           {
-            // Judge the miss.
-            // NOTE: This is what handles the scoring.
-            // trace('Missed note! ${note.noteData}');
-            onNoteMiss(event);
-          }
-          // Mute vocals if not taken care of already by onNoteMiss.
-          if (event.playSound)
-          {
-            if (vocals != null) for (track in strumline.vocals)
+            // Call an event to allow canceling the note miss.
+            // NOTE: This is what handles the character animations!
+            var event:NoteScriptEvent = new NoteScriptEvent(NOTE_MISS, note, Constants.HEALTH_MISS_PENALTY, Highscore.tallies.combo, true);
+            dispatchEvent(event);
+
+            // Calling event.cancelEvent() skips all the other logic! Neat!
+            if (event.eventCanceled) continue;
+
+            // Skip scoring the miss for bots!
+            if (strumline.isPlayer)
             {
-              if (track != null) track.volume = 0;
+              // Judge the miss.
+              // NOTE: This is what handles the scoring.
+              // trace('Missed note! ${note.noteData}');
+              onNoteMiss(event);
             }
-            FunkinSound.playOnce(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.5, 0.6));
+            // Mute vocals if not taken care of already by onNoteMiss.
+            if (event.playSound)
+            {
+              if (vocals != null) for (track in strumline.vocals)
+              {
+                if (track != null) track.volume = 0;
+              }
+              FunkinSound.playOnce(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.5, 0.6));
+            }
           }
 
           note.handledMiss = true;
@@ -2827,56 +2857,59 @@ class PlayState extends MusicBeatSubState
           // We dropped a hold note.
           holdNote.handledMiss = true;
 
-          if (holdNote.sustainLength > Constants.HOLD_DROP_PENALTY_THRESHOLD_MS)
+          if (strumline.canMiss)
           {
-            // The hold note wasn't dropped late enough to be forgivable.
-
-            var healthChange:Float = 0;
-            var scoreChange:Int = 0;
-            if (strumline.isPlayer)
+            if (holdNote.sustainLength > Constants.HOLD_DROP_PENALTY_THRESHOLD_MS)
             {
-              // Penalize the player for letting go of a hold note too early.
-              trace('Player dropped a hold note, penalizing... (has hit: ${holdNote.hitNote})');
+              // The hold note wasn't dropped late enough to be forgivable.
 
-              // Different penalty based on whether the note itself was missed,
-              // or the note was hit and then the hold was dropped.
-              var remainingLengthSec:Float = holdNote.sustainLength / Constants.MS_PER_SEC;
-              var healthChangeUncapped:Float = remainingLengthSec * Constants.HEALTH_HOLD_DROP_PENALTY_PER_SECOND;
-              // If the base note of the hold was missed, don't penalize them more on top of that.
-              var healthChangeMax:Float = Constants.HEALTH_HOLD_DROP_PENALTY_MAX - (holdNote.hitNote ? -Constants.HEALTH_MISS_PENALTY : 0);
-              healthChange = healthChangeUncapped.clamp(healthChangeMax, 0);
-              scoreChange = Std.int(Constants.SCORE_HOLD_DROP_PENALTY_PER_SECOND * remainingLengthSec);
-            }
-
-            // Call an event to allow cancelling the penalties.
-            // NOTE: This is what handles the character animations!
-            var event:HoldNoteScriptEvent = new HoldNoteScriptEvent(NOTE_HOLD_DROP, holdNote, healthChange, scoreChange, strumline.isPlayer,
-              Highscore.tallies.combo);
-            dispatchEvent(event);
-
-            // Calling event.cancelEvent() skips all the other logic! Neat!
-            if (event.eventCanceled) continue;
-
-            if (strumline.isPlayer)
-            {
-              trace('Penalizing score by ${event.score} and health by ${event.healthChange} for dropping hold note (is combo break: ${event.isComboBreak})!');
-              applyScore(event.score, '', event.healthChange, event.isComboBreak);
-            }
-
-            // Play the miss sound.
-            if (event.playSound)
-            {
-              // Mute vocals.
-              if (vocals != null) for (track in strumline.vocals)
+              var healthChange:Float = 0;
+              var scoreChange:Int = 0;
+              if (strumline.isPlayer)
               {
-                if (track != null) track.volume = 0;
+                // Penalize the player for letting go of a hold note too early.
+                trace('Player dropped a hold note, penalizing... (has hit: ${holdNote.hitNote})');
+
+                // Different penalty based on whether the note itself was missed,
+                // or the note was hit and then the hold was dropped.
+                var remainingLengthSec:Float = holdNote.sustainLength / Constants.MS_PER_SEC;
+                var healthChangeUncapped:Float = remainingLengthSec * Constants.HEALTH_HOLD_DROP_PENALTY_PER_SECOND;
+                // If the base note of the hold was missed, don't penalize them more on top of that.
+                var healthChangeMax:Float = Constants.HEALTH_HOLD_DROP_PENALTY_MAX - (holdNote.hitNote ? -Constants.HEALTH_MISS_PENALTY : 0);
+                healthChange = healthChangeUncapped.clamp(healthChangeMax, 0);
+                scoreChange = Std.int(Constants.SCORE_HOLD_DROP_PENALTY_PER_SECOND * remainingLengthSec);
               }
-              FunkinSound.playOnce(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.5, 0.6));
+
+              // Call an event to allow cancelling the penalties.
+              // NOTE: This is what handles the character animations!
+              var event:HoldNoteScriptEvent = new HoldNoteScriptEvent(NOTE_HOLD_DROP, holdNote, healthChange, scoreChange, strumline.isPlayer,
+                Highscore.tallies.combo);
+              dispatchEvent(event);
+
+              // Calling event.cancelEvent() skips all the other logic! Neat!
+              if (event.eventCanceled) continue;
+
+              if (strumline.isPlayer)
+              {
+                trace('Penalizing score by ${event.score} and health by ${event.healthChange} for dropping hold note (is combo break: ${event.isComboBreak})!');
+                applyScore(event.score, '', event.healthChange, event.isComboBreak);
+              }
+
+              // Play the miss sound.
+              if (event.playSound)
+              {
+                // Mute vocals.
+                if (vocals != null) for (track in strumline.vocals)
+                {
+                  if (track != null) track.volume = 0;
+                }
+                FunkinSound.playOnce(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.5, 0.6));
+              }
             }
-          }
-          else
-          {
-            trace('Hold note too short, not penalizing...');
+            else
+            {
+              trace('Hold note too short, not penalizing...');
+            }
           }
         }
       }
@@ -3080,6 +3113,8 @@ class PlayState extends MusicBeatSubState
   {
     // If we are here, we already CALLED the onNoteMiss script hook!
 
+    if (!(event.note.parentStrumline?.canMiss ?? true)) return;
+
     if (!isPracticeMode)
     {
       // messy copy paste rn lol
@@ -3113,6 +3148,8 @@ class PlayState extends MusicBeatSubState
   function ghostNoteMiss(direction:NoteDirection, hasPossibleNotes:Bool = true, ?strumline:Strumline):Void
   {
     if (strumline == null) strumline = playerStrumline;
+    if (!strumline.canMiss) return;
+
     var event:GhostMissNoteScriptEvent = new GhostMissNoteScriptEvent(direction, // Direction missed in.
       hasPossibleNotes, // Whether there was a note you could have hit.
       Constants.HEALTH_GHOST_MISS_PENALTY, // How much health to add (negative).
