@@ -95,9 +95,6 @@ import haxe.ui.components.Button;
 import haxe.ui.components.DropDown;
 import haxe.ui.components.Label;
 import haxe.ui.components.Slider;
-import haxe.ui.containers.dialogs.Dialogs;
-import haxe.ui.containers.dialogs.Dialog.DialogButton;
-import haxe.ui.containers.dialogs.MessageBox.MessageBoxType;
 import haxe.ui.containers.dialogs.CollapsibleDialog;
 import haxe.ui.containers.menus.Menu;
 import haxe.ui.containers.menus.MenuBar;
@@ -1258,9 +1255,10 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
 
   /**
    * The song manifest data.
-   * If none already exists, it's intialized with the current song name in lower-kebab-case.
+   * If none already exists, it's initialized with the current song name in lower-kebab-case.
    */
   var _songManifestData:Null<ChartManifestData> = null;
+
   var songManifestData(get, set):ChartManifestData;
 
   function get_songManifestData():ChartManifestData
@@ -5675,15 +5673,7 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
   {
     if (saveDataDirty)
     {
-      Dialogs.messageBox("You are about to leave the editor without saving.\n\nAre you sure?", "Leave Editor", MessageBoxType.TYPE_YESNO, true,
-        function(button:DialogButton) {
-          if (button == DialogButton.YES)
-          {
-            autoSave();
-            quitChartEditor();
-          }
-        });
-
+      this.openLeaveConfirmationDialog();
       return;
     }
 
