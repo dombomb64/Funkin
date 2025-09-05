@@ -2,6 +2,7 @@ package funkin.play.notes;
 
 import funkin.data.song.SongData.SongNoteData;
 import funkin.data.song.SongData.NoteParamData;
+import funkin.play.notes.Strumline;
 import funkin.play.notes.notestyle.NoteStyle;
 import funkin.graphics.FunkinSprite;
 import funkin.graphics.shaders.HSVShader;
@@ -10,9 +11,17 @@ class NoteSprite extends FunkinSprite
 {
   static final DIRECTION_COLORS:Array<String> = ['purple', 'blue', 'green', 'red'];
 
+  /**
+   * The hold note sprite for this note.
+   */
   public var holdNoteSprite:SustainTrail;
 
   var hsvShader:HSVShader;
+
+  /**
+   * The parent strumline this note is attached to.
+   */
+  public var parentStrumline:Null<Strumline>;
 
   /**
    * The strum time at which the note should be hit, in milliseconds.
@@ -65,7 +74,7 @@ class NoteSprite extends FunkinSprite
   }
 
   /**
-   * An array of custom parameters for this note
+   * An array of custom parameters for this note.
    */
   public var params(get, set):Array<NoteParamData>;
 
@@ -81,7 +90,7 @@ class NoteSprite extends FunkinSprite
   }
 
   /**
-   * The data of the note (i.e. the direction.)
+   * The data of the note (i.e. the direction).
    */
   public var direction(default, set):NoteDirection;
 
@@ -95,8 +104,23 @@ class NoteSprite extends FunkinSprite
     return this.direction;
   }
 
+  /**
+   * The note data associated with this note sprite.
+   * This is used to store the strum time, length, and other properties.
+   */
   public var noteData:SongNoteData;
 
+  /**
+   * If this note kind is scoreable (i.e., counted towards score and accuracy).
+   * Only accessible in scripts.
+   * Defaults to true.
+   */
+  public var scoreable:Bool = true;
+
+  /**
+   * Whether this note is a hold note.
+   * This is true if the length is greater than 0.
+   */
   public var isHoldNote(get, never):Bool;
 
   function get_isHoldNote():Bool
@@ -115,13 +139,15 @@ class NoteSprite extends FunkinSprite
   public var hasBeenHit:Bool = false;
 
   /**
-   * Register this note as hit only after any other notes
+   * Register this note as hit only after any other notes.
+   * In other words, a regular note in range would be hit instead of a low priority one in range.
+   * Useful for notes that the player would prefer to avoid, like mines.
    */
   public var lowPriority:Bool = false;
 
   /**
    * This is true if the note is later than 10 frames within the strumline,
-   * and thus can't be hit by the player.
+   * and thus can't be hit.
    * It will be destroyed after it moves offscreen.
    * Managed by PlayState.
    */
@@ -129,14 +155,14 @@ class NoteSprite extends FunkinSprite
 
   /**
    * This is true if the note is earlier than 10 frames within the strumline.
-   * and thus can't be hit by the player.
+   * and thus can't be hit.
    * Managed by PlayState.
    */
   public var tooEarly:Bool;
 
   /**
    * This is true if the note is within 10 frames of the strumline,
-   * and thus may be hit by the player.
+   * and thus may be hit.
    * Managed by PlayState.
    */
   public var mayHit:Bool;
@@ -160,21 +186,19 @@ class NoteSprite extends FunkinSprite
   }
 
   /**
-   * Creates frames and animations
+   * Creates frames and animations.
    * @param noteStyle The `NoteStyle` instance
    */
   public function setupNoteGraphic(noteStyle:NoteStyle):Void
   {
     noteStyle.buildNoteSprite(this);
 
-    this.shader = hsvShader;
-
     // `false` disables the update() function for performance.
     this.active = noteStyle.isNoteAnimated();
   }
 
   /**
-   * Retrieve the value of the param with the given name
+   * Retrieve the value of the param with the given name.
    * @param name Name of the param
    * @return Null<Dynamic>
    */
@@ -221,11 +245,13 @@ class NoteSprite extends FunkinSprite
   public function desaturate():Void
   {
     this.hsvShader.saturation = 0.2;
+    this.shader = this.hsvShader;
   }
 
   public function setHue(hue:Float):Void
   {
     this.hsvShader.hue = hue;
+    if (hue != 1.0) this.shader = this.hsvShader;
   }
 
   public override function revive():Void
@@ -238,7 +264,12 @@ class NoteSprite extends FunkinSprite
     this.hasBeenHit = false;
     this.mayHit = false;
     this.hasMissed = false;
+    this.handledMiss = false;
+    this.holdNoteSprite = null;
 
+    // The hsvShader should only be applied when it's necessary.
+    // Otherwise, it should be turned off to keep note batching.
+    this.shader = null;
     this.hsvShader.hue = 1.0;
     this.hsvShader.saturation = 1.0;
     this.hsvShader.value = 1.0;
