@@ -3176,7 +3176,7 @@ class PlayState extends MusicBeatSubState
     {
       Highscore.tallies.totalNotesHit++;
       applyScore(event.score, event.judgement, event.healthChange, event.isComboBreak);
-      popUpScore(event.judgement, strumline);
+      popUpScore(event.judgement);
     }
   }
 
@@ -3386,10 +3386,8 @@ class PlayState extends MusicBeatSubState
   /**
      * Handles rating popups when a note is hit.
      */
-  function popUpScore(daRating:String, ?combo:Int, ?strumline:Strumline):Void
+  function popUpScore(daRating:String, ?combo:Int):Void
   {
-    if (strumline == null) strumline = playerStrumline;
-
     if (daRating == 'miss')
     {
       // If daRating is 'miss', that means we made a mistake and should not continue.
@@ -3418,11 +3416,6 @@ class PlayState extends MusicBeatSubState
     }
     comboPopUps.displayRating(daRating);
     if (combo >= 10) comboPopUps.displayCombo(combo);
-
-    if (vocals != null) for (track in strumline.vocals)
-    {
-      if (track != null) track.volume = 1;
-    }
   }
 
   /**
