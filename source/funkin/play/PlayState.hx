@@ -526,6 +526,7 @@ class PlayState extends MusicBeatSubState
   /**
    * The sprite group containing active players' strumline notes.
    * Setting this will automatically try to add the stage's player character to the start of `playerStrumline.characters`.
+   * This will also try to add `vocals.playerVoices` to the start of `playerStrumline.vocals`.
    */
   public var playerStrumline(get, set):Strumline;
 
@@ -560,6 +561,7 @@ class PlayState extends MusicBeatSubState
   /**
    * The sprite group containing opponents' strumline notes.
    * Setting this will automatically try to add the stage's opponent character to the start of `opponentStrumline.characters`.
+   * This will also try to add `vocals.opponentVoices` to the start of `opponentStrumline.vocals`.
    */
   public var opponentStrumline(get, set):Strumline;
 
@@ -3113,7 +3115,7 @@ class PlayState extends MusicBeatSubState
     {
       Highscore.tallies.totalNotesHit++;
       applyScore(event.score, event.judgement, event.healthChange, event.isComboBreak);
-      popUpScore(event.judgement, strumline);
+      popUpScore(event.judgement);
     }
   }
 
@@ -3200,7 +3202,7 @@ class PlayState extends MusicBeatSubState
     {
       if (vocals != null) for (track in strumline.vocals)
       {
-        if (track != null) track.volume = 1;
+        if (track != null) track.volume = 0;
       }
       FunkinSound.playOnce(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
     }
@@ -3313,10 +3315,8 @@ class PlayState extends MusicBeatSubState
   /**
      * Handles rating popups when a note is hit.
      */
-  function popUpScore(daRating:String, ?combo:Int, ?strumline:Strumline):Void
+  function popUpScore(daRating:String, ?combo:Int):Void
   {
-    if (strumline == null) strumline = playerStrumline;
-
     if (daRating == 'miss')
     {
       // If daRating is 'miss', that means we made a mistake and should not continue.
@@ -3345,11 +3345,6 @@ class PlayState extends MusicBeatSubState
     }
     comboPopUps.displayRating(daRating);
     if (combo >= 10) comboPopUps.displayCombo(combo);
-
-    if (vocals != null) for (track in strumline.vocals)
-    {
-      if (track != null) track.volume = 1;
-    }
   }
 
   /**
