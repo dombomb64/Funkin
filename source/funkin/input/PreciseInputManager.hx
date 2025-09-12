@@ -189,7 +189,7 @@ class PreciseInputManager extends FlxKeyManager<FlxKey, PreciseInputList>
 
   public function initializeButtons(controls:Controls, gamepad:FlxGamepad):Void
   {
-    clearButtons();
+    // clearButtons();
 
     var limeGamepad = FlxGamepadUtil.getLimeGamepad(gamepad);
     var callbacks =
