@@ -545,9 +545,20 @@ class BaseCharacter extends Bopper
       && this.characterType == event.note.parentStrumline.characterType
       && strumlines.contains(event.note.parentStrumline))
     {
-      // If the strumline controls this character, play the sing animation.
-      this.playSingAnimation(event.note.noteData.getDirection(), false);
-      holdTimer = 0;
+      // If the strumline controls this character, play the sing animation with the note's permission.
+      if (curNoteKind != null)
+      {
+        if (!curNoteKind.noanim)
+        {
+          this.playSingAnimation(event.note.noteData.getDirection(), false, curNoteKind?.suffix);
+          holdTimer = 0;
+        }
+      }
+      else
+      {
+        this.playSingAnimation(event.note.noteData.getDirection(), false);
+        holdTimer = 0;
+      }
     }
     else if (characterType == GF && event.note.noteData.getMustHitNote())
     {
