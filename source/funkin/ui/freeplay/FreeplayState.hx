@@ -3009,7 +3009,7 @@ class FreeplayState extends MusicBeatSubState
         FunkinSound.playOnce(Paths.sound('fav'), 1);
         selectedCapsule.checkClip();
         selectedCapsule.selected = true; // set selected again, so it can run its getter function to initialize movement
-        //controls.active = false;
+        // controls.active = false;
 
         selectedCapsule.doLerp = false;
         FlxTween.tween(selectedCapsule, {y: selectedCapsule.y - 5}, 0.1, {ease: FlxEase.expoOut});
@@ -3036,7 +3036,7 @@ class FreeplayState extends MusicBeatSubState
           selectedCapsule.selected = true; // set selected again, so it can run its getter function to initialize movement
         });
 
-        //controls.active = false;
+        // controls.active = false;
         selectedCapsule.doLerp = false;
         FlxTween.tween(selectedCapsule, {y: selectedCapsule.y + 5}, 0.1, {ease: FlxEase.expoOut});
         FlxTween.tween(selectedCapsule, {y: selectedCapsule.y - 5}, 0.1,

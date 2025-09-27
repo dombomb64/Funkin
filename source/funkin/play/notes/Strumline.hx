@@ -89,7 +89,18 @@ class Strumline extends FlxSpriteGroup
    * Whether this strumline is controlled by the player's inputs.
    * False means it's controlled by the opponent or Bot Play.
    */
-  public var isPlayer:Bool;
+  public var isPlayer(default, set):Bool;
+
+  function set_isPlayer(value:Bool):Bool
+  {
+    isPlayer = value;
+    for (note in strumlineNotes)
+    {
+      @:privateAccess
+      note.isPlayer = value;
+    }
+    return value;
+  }
 
   /**
    * Usually you want to keep this as is, but if you are using a Strumline and
