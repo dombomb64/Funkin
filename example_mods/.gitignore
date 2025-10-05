@@ -1,3 +1,4 @@
 # Exclude any experimental mods that my have been added.
 /*
-!example_mods_old/
+!introMod
+!testing123
