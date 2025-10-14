@@ -124,6 +124,7 @@ class Save implements ConsoleClass
           zoomCamera: true,
           debugDisplay: 'Off',
           debugDisplayBGOpacity: 50,
+          subtitles: true,
           hapticsMode: 'All',
           hapticsIntensityMultiplier: 1,
           autoPause: true,
@@ -376,6 +377,23 @@ class Save implements ConsoleClass
     data.optionsChartEditor.showNoteKinds = value;
     flush();
     return data.optionsChartEditor.showNoteKinds;
+  }
+
+  public var chartEditorShowSubtitles(get, set):Bool;
+
+  function get_chartEditorShowSubtitles():Bool
+  {
+    if (data.optionsChartEditor.showSubtitles == null) data.optionsChartEditor.showSubtitles = true;
+
+    return data.optionsChartEditor.showSubtitles;
+  }
+
+  function set_chartEditorShowSubtitles(value:Bool):Bool
+  {
+    // Set and apply.
+    data.optionsChartEditor.showSubtitles = value;
+    flush();
+    return data.optionsChartEditor.showSubtitles;
   }
 
   public var chartEditorPlaytestStartTime(get, set):Bool;
@@ -1618,6 +1636,12 @@ typedef SaveDataOptions =
   var debugDisplayBGOpacity:Int;
 
   /**
+   * If enabled, subtitles will appear.
+   * @default `true`
+   */
+  var subtitles:Bool;
+
+  /**
    * If enabled, haptic feedback will be enabled.
    * @default `All`
    */
@@ -1878,6 +1902,12 @@ typedef SaveDataChartEditorOptions =
    * @default `true`
    */
   var ?showNoteKinds:Bool;
+
+  /**
+   * Show Subtitles in the Chart Editor.
+   * @default `true`
+   */
+  var ?showSubtitles:Bool;
 
   /**
    * Metronome volume in the Chart Editor.

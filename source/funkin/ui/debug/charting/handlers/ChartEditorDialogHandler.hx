@@ -1,5 +1,6 @@
 package funkin.ui.debug.charting.handlers;
 
+#if FEATURE_CHART_EDITOR
 import flixel.util.FlxTimer;
 import funkin.data.song.importer.FNFLegacyData;
 import funkin.data.song.importer.FNFLegacyImporter;
@@ -168,10 +169,10 @@ class ChartEditorDialogHandler
     var backupTimeLabel:Null<Label> = dialog.findComponent('backupTimeLabel', Label);
     if (backupTimeLabel == null) throw 'Could not locate backupTimeLabel button in Backup Available dialog';
 
-    var latestBackupDate:Null<String> = ChartEditorImportExportHandler.getLatestBackupDate();
-    if (latestBackupDate != null)
+    var latestBackupInfo:Null<String> = ChartEditorImportExportHandler.getLatestBackupInfo();
+    if (latestBackupInfo != null)
     {
-      backupTimeLabel.text = latestBackupDate;
+      backupTimeLabel.text = latestBackupInfo;
     }
 
     var buttonCancel:Null<Button> = dialog.findComponent('dialogCancel', Button);
@@ -1323,17 +1324,14 @@ class ChartEditorDialogHandler
    */
   public static function openLeaveConfirmationDialog(state:ChartEditorState):Dialog
   {
-    var dialog:Null<Dialog> = Dialogs.messageBox("You are about to leave the editor without saving.\n\nAre you sure?", "Leave Editor", MessageBoxType.TYPE_YESNO, true,
-      function(button:DialogButton)
-      {
-        state.isHaxeUIDialogOpen = false;
+    var dialog:Null<Dialog> = Dialogs.messageBox("You are about to leave the editor without saving.\n\nAre you sure?", "Leave Editor",
+      MessageBoxType.TYPE_YESNO, true, function(button:DialogButton) {
         if (button == DialogButton.YES)
         {
-          state.autoSave();
           state.quitChartEditor();
         }
-      }
-    );
+        state.isHaxeUIDialogOpen = false;
+    });
 
     dialog.destroyOnClose = true;
     state.isHaxeUIDialogOpen = true;
@@ -1433,3 +1431,4 @@ class ChartEditorDialogHandler
     });
   }
 }
+#end
