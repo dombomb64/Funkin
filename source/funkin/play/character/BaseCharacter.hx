@@ -541,25 +541,12 @@ class BaseCharacter extends Bopper
     curNoteKind = NoteKindManager.getNoteKind(event.note.noteData.kind);
 
     if (event.playAnim
-      && event.note.parentStrumline != null
-      && this.characterType == event.note.parentStrumline.characterType
-      && strumlines.contains(event.note.parentStrumline))
-    {
-      if (curNoteKind != null)
-      {
-        if (!curNoteKind.noanim)
-        {
-          this.playSingAnimation(event.note.noteData.getDirection(), false, curNoteKind?.suffix);
-          holdTimer = 0;
-        }
-      }
-      else
-      {
-        this.playSingAnimation(event.note.noteData.getDirection(), false);
-        holdTimer = 0;
-      }
-    }
-    else if (!event.note.noteData.getMustHitNote() && characterType == DAD)
+      && ((event.note.parentStrumline != null
+        && this.characterType == event.note.parentStrumline.characterType
+        && strumlines.contains(event.note.parentStrumline))
+        || (event.note.parentStrumline == null
+          && ((event.note.noteData.getMustHitNote() && this.characterType == CharacterType.BF)
+          || (!event.note.noteData.getMustHitNote() && this.characterType == CharacterType.DAD)))))
     {
       if (curNoteKind != null)
       {
@@ -599,9 +586,12 @@ class BaseCharacter extends Bopper
     if (event.eventCanceled) return;
 
     if (event.playAnim
-      && event.note.parentStrumline != null
-      && this.characterType == event.note.parentStrumline.characterType
-      && strumlines.contains(event.note.parentStrumline))
+      && ((event.note.parentStrumline != null
+        && this.characterType == event.note.parentStrumline.characterType
+        && strumlines.contains(event.note.parentStrumline))
+        || (event.note.parentStrumline == null
+          && ((event.note.noteData.getMustHitNote() && this.characterType == CharacterType.BF)
+          || (!event.note.noteData.getMustHitNote() && this.characterType == CharacterType.DAD)))))
     {
       // If the strumline controls this character, play the miss animation.
       this.playSingAnimation(event.note.noteData.getDirection(), true);
@@ -620,9 +610,12 @@ class BaseCharacter extends Bopper
     if (event.eventCanceled) return;
 
     if (event.playAnim
-      && event.holdNote.parentStrumline != null
-      && this.characterType == event.holdNote.parentStrumline.characterType
-      && strumlines.contains(event.holdNote.parentStrumline))
+      && ((event.holdNote.parentStrumline != null
+        && this.characterType == event.holdNote.parentStrumline.characterType
+        && strumlines.contains(event.holdNote.parentStrumline))
+        || (event.holdNote.parentStrumline == null
+          && ((event.holdNote.noteData.getMustHitNote() && this.characterType == CharacterType.BF)
+          || (!event.holdNote.noteData.getMustHitNote() && this.characterType == CharacterType.DAD)))))
     {
       // If the strumline controls this character, play the miss animation.
       this.playSingAnimation(event.holdNote.noteData.getDirection(), true);
@@ -678,7 +671,8 @@ class BaseCharacter extends Bopper
       return;
     }
 
-    if (event.strumline != null && this.characterType == event.strumline.characterType && strumlines.contains(event.strumline))
+    if ((event.strumline != null && this.characterType == event.strumline.characterType && strumlines.contains(event.strumline))
+      || (event.strumline == null && this.characterType == CharacterType.BF))
     {
       // If the strumline controls this character, play the miss animation.
       // trace('Playing ghost miss animation...');
